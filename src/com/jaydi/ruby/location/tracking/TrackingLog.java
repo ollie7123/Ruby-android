@@ -11,11 +11,11 @@ import android.util.Log;
 public class TrackingLog {
 
 	public static void logMsg(Context context, String msg) {
-		Log.i("LTS-M", msg);
+		Log.i("TL-M", msg);
 	}
 
 	public static void logLocation(Context context, String msg) {
-		Log.i("LTS-L", msg);
+		Log.i("TL-L", msg);
 		logFile(context, msg, TrackingConstants.TRACK_FILE);
 	}
 

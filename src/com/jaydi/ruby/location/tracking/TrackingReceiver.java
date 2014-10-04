@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 
 import com.google.android.gms.location.LocationClient;
-import com.jaydi.ruby.location.LocationManager;
+import com.jaydi.ruby.location.LocationUpdateManager;
 import com.jaydi.ruby.utils.CalUtils;
 
 public class TrackingReceiver extends BroadcastReceiver {
@@ -27,9 +27,9 @@ public class TrackingReceiver extends BroadcastReceiver {
 	}
 
 	private void handleLocation(Context context, Location location) {
-		// apply location filter
+		// hand location over to manager, if it passes filter
 		if (filterLocation(context, location))
-			LocationManager.handleLocationUpdate(location);
+			LocationUpdateManager.handleLocationUpdate(context, location);
 
 		// report location update
 		String msg = Double.toString(location.getLatitude()) + " " + Double.toString(location.getLongitude()) + " " + new Date().getTime();
@@ -60,10 +60,14 @@ public class TrackingReceiver extends BroadcastReceiver {
 		double time = (new Date().getTime() - preTime) / 1000;
 		double speed = distance / time;
 
+		// return false if moved distance is under 5m
+		if (distance < 5.0d)
+			return false;
+
 		// return false if speed is over 20m/s
 		// it means that we judge this point to be outlier
 		// even if the user is actually moving at speed of 20m/s, it is no worth pushing a pin to that fast moving user
-		if (speed > 20)
+		if (speed > 20.0d)
 			return false;
 
 		// else return true

@@ -5,5 +5,8 @@
     <string name="app_name">RubyMine</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    
+    <!-- Activities -->
+    <string name="title_activity_ruby">Ruby</string>
 
 </resources>

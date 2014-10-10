@@ -9,14 +9,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.jaydi.ruby.models.RubyZone;
+import com.appspot.ruby_mine.rubymine.model.Rubyzone;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final int DATABASE_VERSION = 1;
-	private static final String DATABASE_NAME = "SpotDB";
+	private static final String DATABASE_NAME = "RubyzoneDB";
 
-	private static final String TABLE_SPOTS = "spots";
+	private static final String TABLE_RUBYZONES = "Rubyzones";
 	private static final String COL_ID = "id";
+	private static final String COL_NAME = "name";
 	private static final String COL_LAT = "lat";
 	private static final String COL_LNG = "lng";
 	private static final String COL_RANGE = "range";
@@ -27,94 +28,83 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String createMessagePinTable = "CREATE TABLE " + TABLE_SPOTS + " (" + COL_ID + " INTEGER PRIMARY KEY, " + COL_LAT + " REAL, " + COL_LNG
-				+ " REAL, " + COL_RANGE + " INTEGER)";
+		String createMessagePinTable = "CREATE TABLE " + TABLE_RUBYZONES + " (" + COL_ID + " INTEGER PRIMARY KEY, " + COL_NAME + " TEXT, " + COL_LAT
+				+ " REAL, " + COL_LNG + " REAL, " + COL_RANGE + " INTEGER)";
 		db.execSQL(createMessagePinTable);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		if (newVersion > oldVersion) {
-			db.execSQL("DROP TABLE IF EXISTS " + TABLE_SPOTS);
+			db.execSQL("DROP TABLE IF EXISTS " + TABLE_RUBYZONES);
 			onCreate(db);
 		}
 	}
 
-	public void addSpot(RubyZone spot) {
-		if (spot == null)
+	public void addRubyzone(Rubyzone rubyzone) {
+		if (rubyzone == null)
 			return;
 
-		deleteSpot(spot.getId());
+		deleteRubyzone(rubyzone.getId());
 
 		ContentValues values = new ContentValues();
-		values.put(COL_ID, spot.getId());
-		values.put(COL_LAT, spot.getLat());
-		values.put(COL_LNG, spot.getLng());
-		values.put(COL_RANGE, spot.getRange());
+		values.put(COL_ID, rubyzone.getId());
+		values.put(COL_NAME, rubyzone.getName());
+		values.put(COL_LAT, rubyzone.getLat());
+		values.put(COL_LNG, rubyzone.getLng());
+		values.put(COL_RANGE, rubyzone.getRange());
 
 		SQLiteDatabase db = getWritableDatabase();
-		db.insert(TABLE_SPOTS, null, values);
+		db.insert(TABLE_RUBYZONES, null, values);
 		db.close();
 	}
 
-	// public Link getLink(String url) {
-	// Link link = null;
-	//
-	// String[] cols = new String[] { COL_URL, COL_TITLE };
-	// String selection = COL_URL + " = ?";
-	// String[] args = new String[] { url };
-	//
-	// SQLiteDatabase db = getReadableDatabase();
-	// Cursor cursor = db.query(TABLE_LINKS, cols, selection, args, null, null, null);
-	// if (cursor == null)
-	// return link;
-	// if (cursor.isAfterLast())
-	// return link;
-	//
-	// if (cursor.moveToFirst())
-	// do {
-	// link = new Link();
-	// link.setUrl(cursor.getString(0));
-	// link.setTitle(cursor.getString(1));
-	// } while (cursor.moveToNext());
-	//
-	// cursor.close();
-	// db.close();
-	//
-	// return link;
-	// }
+	public void addRubyzones(List<Rubyzone> rubyzones) {
+		if (rubyzones == null)
+			return;
 
-	public List<RubyZone> getSpots() {
-		List<RubyZone> spots = new ArrayList<RubyZone>();
+		for (Rubyzone rubyzone : rubyzones)
+			addRubyzone(rubyzone);
+	}
 
-		String[] cols = new String[] { COL_ID, COL_LAT, COL_LNG, COL_RANGE };
+	public List<Rubyzone> getRubyzones() {
+		List<Rubyzone> rubyzones = new ArrayList<Rubyzone>();
+
+		String[] cols = new String[] { COL_ID, COL_NAME, COL_LAT, COL_LNG, COL_RANGE };
 
 		SQLiteDatabase db = getReadableDatabase();
-		Cursor cursor = db.query(TABLE_SPOTS, cols, null, null, null, null, null);
+		Cursor cursor = db.query(TABLE_RUBYZONES, cols, null, null, null, null, null);
 		if (cursor == null)
-			return spots;
+			return rubyzones;
 		if (cursor.isAfterLast())
-			return spots;
+			return rubyzones;
 
 		if (cursor.moveToFirst())
 			do {
-				RubyZone spot = new RubyZone();
-				spot.setId(cursor.getLong(0));
-				spot.setLat(cursor.getDouble(1));
-				spot.setLng(cursor.getDouble(2));
-				spot.setRange(cursor.getInt(3));
-				spots.add(spot);
+				Rubyzone rubyzone = new Rubyzone();
+				rubyzone.setId(cursor.getLong(0));
+				rubyzone.setName(cursor.getString(1));
+				rubyzone.setLat(cursor.getDouble(2));
+				rubyzone.setLng(cursor.getDouble(3));
+				rubyzone.setRange(cursor.getInt(4));
+				rubyzones.add(rubyzone);
 			} while (cursor.moveToNext());
 
 		cursor.close();
 		db.close();
 
-		return spots;
+		return rubyzones;
 	}
 
-	public void deleteSpot(long id) {
+	public void deleteRubyzone(long id) {
 		SQLiteDatabase db = getWritableDatabase();
-		db.delete(TABLE_SPOTS, COL_ID + " = ?", new String[] { String.valueOf(id) });
+		db.delete(TABLE_RUBYZONES, COL_ID + " = ?", new String[] { String.valueOf(id) });
+		db.close();
+	}
+
+	public void deleteRubyzoneAll() {
+		SQLiteDatabase db = getWritableDatabase();
+		db.delete(TABLE_RUBYZONES, null, null);
 		db.close();
 	}
 

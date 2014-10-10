@@ -6,9 +6,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.location.Location;
 
+import com.appspot.ruby_mine.rubymine.model.Rubyzone;
 import com.jaydi.ruby.connection.ResponseHandler;
 import com.jaydi.ruby.connection.database.DatabaseInter;
-import com.jaydi.ruby.models.RubyZone;
 import com.jaydi.ruby.utils.CalUtils;
 
 public class LocationUpdateManager {
@@ -25,22 +25,24 @@ public class LocationUpdateManager {
 	}
 
 	private static void getRubyZones(Context context, final Location location) {
-		DatabaseInter.getRubyZones(context, new ResponseHandler<List<RubyZone>>() {
+		DatabaseInter.getRubyzones(context, new ResponseHandler<List<Rubyzone>>() {
 
 			@Override
-			protected void onResponse(List<RubyZone> res) {
+			protected void onResponse(List<Rubyzone> res) {
 				checkNearbyRubyZone(res, location);
 			}
 
 		});
 	}
 
-	private static void checkNearbyRubyZone(List<RubyZone> rubyZones, Location location) {
+	private static void checkNearbyRubyZone(List<Rubyzone> rubyZones, Location location) {
 		// count if user is in zone
 		int cnt = 0;
-		for (RubyZone rubyZone : rubyZones)
-			if (CalUtils.calDistance(rubyZone.getLat(), rubyZone.getLng(), location.getLatitude(), location.getLongitude()) < rubyZone.getRange())
+		for (Rubyzone rubyZone : rubyZones)
+			if (CalUtils.calDistance(rubyZone.getLat(), rubyZone.getLng(), location.getLatitude(), location.getLongitude()) < rubyZone.getRange()) {
 				cnt++;
+				break;
+			}
 
 		// turn on ble if user is in zone
 		if (cnt > 0)

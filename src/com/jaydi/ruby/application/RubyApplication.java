@@ -4,11 +4,13 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import com.appspot.ruby_mine.rubymine.model.RubyzoneCol;
 import com.jaydi.ruby.BaseActivity;
 import com.jaydi.ruby.beacon.scanning.BeaconListener;
+import com.jaydi.ruby.connection.ResponseHandler;
 import com.jaydi.ruby.connection.database.DatabaseInter;
+import com.jaydi.ruby.connection.network.NetworkInter;
 import com.jaydi.ruby.location.tracking.TrackingService;
-import com.jaydi.ruby.models.RubyZone;
 
 public class RubyApplication extends Application {
 	public static final String PREF_APP = "prefApp";
@@ -24,22 +26,7 @@ public class RubyApplication extends Application {
 		super.onCreate();
 		instance = this;
 
-		// temporary
-		insertTempZone();
-
-		initBeaconManager();
-		initLocationTracker();
-	}
-
-	// temporary
-	private void insertTempZone() {
-		RubyZone zone = new RubyZone();
-		zone.setId(1);
-		zone.setLat(37.505289d);
-		zone.setLng(127.048323d);
-		zone.setRange(100);
-
-		DatabaseInter.addRubyZone(this, zone);
+		initBackgroundFeatures();
 	}
 
 	@Override
@@ -51,6 +38,37 @@ public class RubyApplication extends Application {
 
 	public static RubyApplication getInstance() {
 		return instance;
+	}
+
+	private void initBackgroundFeatures() {
+		NetworkInter.getRubyzones(new ResponseHandler<RubyzoneCol>() {
+
+			@Override
+			protected void onResponse(final RubyzoneCol rubyzoneCol) {
+				if (rubyzoneCol != null && rubyzoneCol.getRubyzones() != null)
+					DatabaseInter.deleteRubyzoneAll(RubyApplication.this, new ResponseHandler<Void>() {
+
+						@Override
+						protected void onResponse(Void res) {
+							DatabaseInter.addRubyzones(RubyApplication.this, new ResponseHandler<Void>() {
+
+								@Override
+								protected void onResponse(Void res) {
+									initBeaconManager();
+									initLocationTracker();
+								}
+
+							}, rubyzoneCol.getRubyzones());
+						}
+
+					});
+				else {
+					initBeaconManager();
+					initLocationTracker();
+				}
+			}
+
+		});
 	}
 
 	private void initBeaconManager() {

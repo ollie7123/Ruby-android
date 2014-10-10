@@ -30,4 +30,11 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>rubymine-v1-generated-source</name>
+			<type>2</type>
+			<location>/Users/Will-Mac/workspace/Ruby-appengine/endpoint-libs/librubymine-v1/rubymine/rubymine-v1-generated-source</location>
+		</link>
+	</linkedResources>
 </projectDescription>

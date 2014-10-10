@@ -16,7 +16,7 @@ public class TrackingLog {
 
 	public static void logLocation(Context context, String msg) {
 		Log.i("TL-L", msg);
-		// logFile(context, msg, TrackingConstants.TRACK_FILE);
+		logFile(context, msg, TrackingConstants.TRACK_FILE);
 	}
 
 	public static void logFile(Context context, String msg, String fileName) {

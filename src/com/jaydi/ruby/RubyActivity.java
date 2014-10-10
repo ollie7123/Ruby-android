@@ -8,7 +8,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 public class RubyActivity extends Activity {
-	private int major;
+	private String name;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +19,7 @@ public class RubyActivity extends Activity {
 			turnOn();
 
 		if (savedInstanceState == null)
-			major = getIntent().getIntExtra("com.jaydi.ruby.major", 0);
+			name = getIntent().getStringExtra("com.jaydi.ruby.rubyminename");
 
 		showRubyInfo();
 	}
@@ -32,7 +32,7 @@ public class RubyActivity extends Activity {
 
 	private void showRubyInfo() {
 		TextView textInfo = (TextView) findViewById(R.id.text_ruby_info);
-		textInfo.setText("found Ruby from RubyMine:" + major);
+		textInfo.setText("found ruby in " + name);
 	}
 
 }

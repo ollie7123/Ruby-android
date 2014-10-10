@@ -1,7 +1,5 @@
 package com.jaydi.ruby.utils;
 
-import org.altbeacon.beacon.Beacon;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
@@ -10,6 +8,7 @@ import android.content.Intent;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 
+import com.appspot.ruby_mine.rubymine.model.Rubymine;
 import com.jaydi.ruby.BaseActivity;
 import com.jaydi.ruby.MainActivity;
 import com.jaydi.ruby.R;
@@ -18,18 +17,20 @@ import com.jaydi.ruby.application.RubyApplication;
 
 public class RubyUtils {
 
-	public static void popupRuby(Context context, Beacon beacon) {
+	public static void popupRuby(Context context, Rubymine rubymine) {
 		Intent intent = new Intent(context, RubyActivity.class);
-		intent.putExtra("com.jaydi.ruby.major", Integer.valueOf(beacon.getId2().toString()));
+		intent.putExtra("com.jaydi.ruby.rubyminename", rubymine.getName());
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(intent);
+
+		notifyRuby(context, rubymine);
 
 		vibrate();
 	}
 
-	public static void notifyRuby(Context context, Beacon beacon) {
+	public static void notifyRuby(Context context, Rubymine rubymine) {
 		Intent intent = new Intent(context, RubyActivity.class);
-		intent.putExtra("com.jaydi.ruby.major", Integer.valueOf(beacon.getId2().toString()));
+		intent.putExtra("com.jaydi.ruby.rubyminename", rubymine.getName());
 
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 		stackBuilder.addParentStack(MainActivity.class);
@@ -40,21 +41,21 @@ public class RubyUtils {
 		builder.setAutoCancel(true);
 		builder.setSmallIcon(R.drawable.ic_launcher);
 		builder.setContentTitle("RubyMine");
-		builder.setContentText("Found Ruby");
+		builder.setContentText("found ruby in " + rubymine.getName());
 		builder.setContentIntent(resultPendingIntent);
 
 		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.notify(Integer.valueOf(beacon.getId2().toString()), builder.build());
+		mNotificationManager.notify(rubymine.getId().intValue(), builder.build());
 
 		vibrate();
 	}
 
-	public static void toastRuby(Context context, Beacon beacon) {
+	public static void toastRuby(Context context, Rubymine rubymine) {
 		BaseActivity activity = RubyApplication.getInstance().getOnScreenActivity();
 		if (activity != null)
-			activity.toastRuby(beacon);
+			activity.toastRuby(rubymine);
 		else
-			notifyRuby(context, beacon);
+			notifyRuby(context, rubymine);
 
 		vibrate();
 	}

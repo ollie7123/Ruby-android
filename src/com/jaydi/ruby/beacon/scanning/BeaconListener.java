@@ -85,11 +85,14 @@ public class BeaconListener implements BeaconConsumer, RangeNotifier {
 	}
 
 	private boolean filtBeacon(Beacon beacon) {
-		long expirationTime = getExpirationTime(beacon);
-		if (new Date().getTime() > expirationTime)
-			return true;
-		else
+		if (beacon.getDistance() > Double.valueOf(beacon.getId3().toString()))
 			return false;
+
+		long expirationTime = getExpirationTime(beacon);
+		if (new Date().getTime() < expirationTime)
+			return false;
+		else
+			return true;
 	}
 
 	private long getExpirationTime(Beacon beacon) {
@@ -107,9 +110,9 @@ public class BeaconListener implements BeaconConsumer, RangeNotifier {
 	private long getMidnightTime() {
 		Calendar c = Calendar.getInstance(Locale.KOREA);
 		c.setTime(new Date());
-		c.set(Calendar.HOUR_OF_DAY, 24);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.HOUR_OF_DAY, 23);
+		c.set(Calendar.MINUTE, 59);
+		c.set(Calendar.SECOND, 59);
 		return c.getTimeInMillis();
 	}
 

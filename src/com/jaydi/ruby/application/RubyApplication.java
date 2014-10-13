@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 
 import com.appspot.ruby_mine.rubymine.model.RubyzoneCol;
 import com.jaydi.ruby.BaseActivity;
-import com.jaydi.ruby.beacon.scanning.BeaconListener;
 import com.jaydi.ruby.connection.ResponseHandler;
 import com.jaydi.ruby.connection.database.DatabaseInter;
 import com.jaydi.ruby.connection.network.NetworkInter;
@@ -19,20 +18,17 @@ public class RubyApplication extends Application {
 	private static RubyApplication instance;
 	private static BaseActivity onScreenActivity;
 
-	private BeaconListener beaconListener;
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		instance = this;
 
-		initBackgroundFeatures();
+		initBackgroundTracking();
 	}
 
 	@Override
 	public void onTerminate() {
 		instance = null;
-		termBeaconManager();
 		super.onTerminate();
 	}
 
@@ -40,7 +36,7 @@ public class RubyApplication extends Application {
 		return instance;
 	}
 
-	private void initBackgroundFeatures() {
+	private void initBackgroundTracking() {
 		NetworkInter.getRubyzones(new ResponseHandler<RubyzoneCol>() {
 
 			@Override
@@ -54,7 +50,6 @@ public class RubyApplication extends Application {
 
 								@Override
 								protected void onResponse(Void res) {
-									initBeaconManager();
 									initLocationTracker();
 								}
 
@@ -62,25 +57,11 @@ public class RubyApplication extends Application {
 						}
 
 					});
-				else {
-					initBeaconManager();
+				else
 					initLocationTracker();
-				}
 			}
 
 		});
-	}
-
-	private void initBeaconManager() {
-		// start scanning beacons
-		beaconListener = new BeaconListener();
-		beaconListener.init(this);
-	}
-
-	private void termBeaconManager() {
-		// terminate beacon scanning
-		if (beaconListener != null)
-			beaconListener.term();
 	}
 
 	private void initLocationTracker() {

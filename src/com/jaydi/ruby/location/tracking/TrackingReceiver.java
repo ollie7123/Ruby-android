@@ -32,8 +32,7 @@ public class TrackingReceiver extends BroadcastReceiver {
 			LocationUpdateManager.handleLocationUpdate(context, location);
 
 		// report location update
-		String msg = Double.toString(location.getLatitude()) + " " + Double.toString(location.getLongitude()) + " " + new Date().getTime();
-		TrackingLog.logLocation(context, msg);
+		TrackingLog.logLocation(context, location);
 	}
 
 	private boolean filterLocation(Context context, Location location) {

@@ -111,7 +111,7 @@ public class TrackingService extends Service implements GooglePlayServicesClient
 	private void setRestartAlarm(boolean flag) {
 		// restart manager will get broadcast from alarm
 		Intent intent = new Intent(this, TrackingRestartReceiver.class);
-		intent.setAction(TrackingRestartReceiver.ACTION_RESTART_ALARM);
+		intent.setAction(TrackingRestartReceiver.ACTION_RESTART_TRACKING);
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 12491, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		// set alarm repeating every 30 minutes

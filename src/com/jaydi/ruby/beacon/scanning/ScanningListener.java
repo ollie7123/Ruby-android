@@ -18,16 +18,15 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.jaydi.ruby.beacon.BeaconUpdateManager;
 
-public class BeaconListener implements BeaconConsumer, RangeNotifier {
+public class ScanningListener implements BeaconConsumer, RangeNotifier {
 	private static final String UUID = "7ed18560-4686-43c7-a8bb-7621e22b1cc8";
 	private static final String PREF_BEACON = "prefBeacon";
 
-	private static Context context;
-	private static BeaconManager beaconManager;
+	private Context context;
+	private BeaconManager beaconManager;
 
 	@Override
 	public Context getApplicationContext() {
@@ -45,25 +44,28 @@ public class BeaconListener implements BeaconConsumer, RangeNotifier {
 	}
 
 	public void init(Context context) {
-		BeaconListener.context = context;
+		this.context = context;
 		beaconManager = BeaconManager.getInstanceForApplication(context);
 
-		// start beacon scanner
+		// start beacon service
 		beaconManager.bind(this);
 		// set beacon layout to search any beacon profiles
 		beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
 	}
 
 	public void term() {
+		// stop beacon service
 		beaconManager.unbind(this);
 	}
 
 	@Override
 	public void onBeaconServiceConnect() {
+		// attach range notifier interface which is this class
 		beaconManager.setRangeNotifier(this);
 
 		try {
-			// start ranging beacons with id RubyMine
+			// start ranging beacons with name RubyMine
+			// by setting unique UUID, detects only RubyMine beacons
 			beaconManager.startRangingBeaconsInRegion(new Region("RubyMine", Identifier.parse(UUID), null, null));
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -72,7 +74,7 @@ public class BeaconListener implements BeaconConsumer, RangeNotifier {
 
 	@Override
 	public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-		Log.i("BEACON", "FOUND: " + beacons.size());
+		// process detected beacons
 		for (Beacon beacon : beacons)
 			processBeacon(beacon);
 	}
@@ -82,14 +84,19 @@ public class BeaconListener implements BeaconConsumer, RangeNotifier {
 			saveExpirationTime(beacon);
 			BeaconUpdateManager.handleBeaconUpdate(context, beacon);
 		}
+
+		// log detected beacon
+		ScanningLog.logBeacon(context, beacon);
 	}
 
 	private boolean filtBeacon(Beacon beacon) {
+		// return false if beacon is too far
 		if (beacon.getDistance() > Double.valueOf(beacon.getId3().toString()))
 			return false;
 
+		// check if beacon is cached and not expired
 		long expirationTime = getExpirationTime(beacon);
-		if (new Date().getTime() < expirationTime)
+		if (System.currentTimeMillis() < expirationTime)
 			return false;
 		else
 			return true;
@@ -101,6 +108,7 @@ public class BeaconListener implements BeaconConsumer, RangeNotifier {
 	}
 
 	private void saveExpirationTime(Beacon beacon) {
+		// cache beacon detection, expiration time is the midnight of today
 		SharedPreferences pref = getPref(context);
 		SharedPreferences.Editor editor = pref.edit();
 		editor.putLong(beacon.getId2().toString(), getMidnightTime());

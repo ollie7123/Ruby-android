@@ -1,4 +1,4 @@
-package com.jaydi.ruby.location.tracking;
+package com.jaydi.ruby.beacon.scanning;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -6,20 +6,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 
+import org.altbeacon.beacon.Beacon;
+
 import android.content.Context;
-import android.location.Location;
 import android.util.Log;
 
-public class TrackingLog {
+public class ScanningLog {
 
-	public static void logMsg(Context context, String msg) {
-		Log.i("TL", msg);
-	}
-
-	public static void logLocation(Context context, Location location) {
-		String msg = Double.toString(location.getLatitude()) + " " + Double.toString(location.getLongitude()) + " " + new Date().getTime();
-		Log.i("TL", msg);
-		logFile(context, msg, TrackingConstants.TRACK_FILE);
+	public static void logBeacon(Context context, Beacon beacon) {
+		String msg = beacon.getId2().toString() + " " + beacon.getId3().toString() + " " + new Date().getTime();
+		Log.i("BL", msg);
+		logFile(context, msg, ScanningConstants.TRACK_FILE);
 	}
 
 	public static void logFile(Context context, String msg, String fileName) {
@@ -41,4 +38,5 @@ public class TrackingLog {
 			e.printStackTrace();
 		}
 	}
+
 }

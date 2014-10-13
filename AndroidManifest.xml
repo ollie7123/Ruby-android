@@ -39,7 +39,7 @@
             android:exported="false"
             android:label="TrackingRestartReceiver" >
             <intent-filter>
-                <action android:name="com.jaydi.ruby.intent.action.Restart_Alarm" />
+                <action android:name="com.jaydi.ruby.intent.action.RESTART_TRACKING" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -55,6 +55,30 @@
             android:enabled="true"
             android:exported="false"
             android:label="TrackingReceiver" >
+        </receiver>
+        <receiver
+            android:name="com.jaydi.ruby.beacon.scanning.BluetoothStateReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="BluetoothStateReceiver" >
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.DISCOVERY_STARTED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.DISCOVERY_FINISHED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.jaydi.ruby.beacon.scanning.ScanningCommandReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="ScanningCommandReceiver" >
+            <intent-filter>
+                <action android:name="com.jaydi.ruby.intent.action.RESTART_SCANNING" />
+            </intent-filter>
         </receiver>
 
         <service android:name="com.jaydi.ruby.location.tracking.TrackingService" />

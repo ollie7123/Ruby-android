@@ -17,11 +17,7 @@ public class ScanningManager {
 
 	public static void turnOnScanning(Context context) {
 		turnOnBluetooth(context);
-
-		if (scanningListener == null) {
-			scanningListener = new ScanningListener();
-			scanningListener.init(context.getApplicationContext());
-		}
+		initScanningListener(context);
 	}
 
 	private static void turnOnBluetooth(Context context) {
@@ -34,14 +30,17 @@ public class ScanningManager {
 			savePreState(context, true);
 	}
 
+	private static void initScanningListener(Context context) {
+		if (scanningListener == null) {
+			scanningListener = new ScanningListener();
+			scanningListener.init(context.getApplicationContext());
+		}
+	}
+
 	public static void turnOffScanning(Context context) {
 		if (!getPreState(context))
 			turnOffBluetooth();
-
-		if (scanningListener != null) {
-			scanningListener.term();
-			scanningListener = null;
-		}
+		termScanningListener();
 	}
 
 	private static void turnOffBluetooth() {
@@ -50,21 +49,49 @@ public class ScanningManager {
 			adapter.disable();
 	}
 
-	// for crash recovery
-	public static void startRecovery(Context context) {
-		// first start discovery
+	private static void termScanningListener() {
+		if (scanningListener != null) {
+			scanningListener.term();
+			scanningListener = null;
+		}
+	}
+
+	// for crash protection
+	public static void forceFlush(Context context) {
+		termScanningListener();
+
+		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+		if (adapter.startDiscovery()) {
+			Intent intent = new Intent(context, ScanningCommandReceiver.class);
+			intent.setAction(ScanningCommandReceiver.ACTION_STOP_FLUSHING);
+			PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 10942, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+			AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+			manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000 * 5), pendingIntent);
+		}
+	}
+
+	// for crash protection
+	public static void finishFlush(Context context) {
 		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 		if (adapter.isDiscovering())
 			adapter.cancelDiscovery();
-		adapter.startDiscovery();
+		if (!adapter.isEnabled())
+			adapter.enable();
 
-		// stop discovery 3 seconds later
+		initScanningListener(context);
+	}
+
+	// for crash recovery
+	public static void startRecovery(Context context) {
+		termScanningListener();
+
 		Intent intent = new Intent(context, ScanningCommandReceiver.class);
-		intent.setAction(ScanningCommandReceiver.ACTION_STOP_DISCOVERING);
-		PendingIntent restartIntent = PendingIntent.getBroadcast(context, 10900, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		intent.setAction(ScanningCommandReceiver.ACTION_RESTART_DELAYED);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 10900, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000 * 3), restartIntent);
+		manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000 * 5), pendingIntent);
 	}
 
 	// for crash recovery
@@ -74,11 +101,11 @@ public class ScanningManager {
 
 		// restart scanning 3 seconds later
 		Intent intent = new Intent(context, ScanningCommandReceiver.class);
-		intent.setAction(ScanningCommandReceiver.ACTION_RESTART_SCANNING);
-		PendingIntent restartIntent = PendingIntent.getBroadcast(context, 11780, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		intent.setAction(ScanningCommandReceiver.ACTION_START_SCANNING);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 11780, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000 * 3), restartIntent);
+		manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000 * 5), pendingIntent);
 	}
 
 	private static boolean getPreState(Context context) {

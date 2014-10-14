@@ -64,12 +64,6 @@
             <intent-filter>
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.DISCOVERY_STARTED" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.bluetooth.adapter.action.DISCOVERY_FINISHED" />
-            </intent-filter>
         </receiver>
         <receiver
             android:name="com.jaydi.ruby.beacon.scanning.ScanningCommandReceiver"

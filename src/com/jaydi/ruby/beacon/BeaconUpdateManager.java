@@ -1,6 +1,6 @@
 package com.jaydi.ruby.beacon;
 
-import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.Identifier;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,17 +14,17 @@ import com.jaydi.ruby.utils.RubyUtils;
 
 public class BeaconUpdateManager {
 
-	public static void handleBeaconUpdate(Context context, Beacon beacon) {
+	public static void handleBeaconUpdate(Context context, Identifier id) {
 		int state = 0;
 		if (isScreenOn(context))
 			state++;
 		if (isAppOnScreen(context))
 			state++;
 
-		getRubyMine(context, beacon, state);
+		getRubyMine(context, id, state);
 	}
 
-	private static void getRubyMine(final Context context, final Beacon beacon, final int state) {
+	private static void getRubyMine(final Context context, Identifier id, final int state) {
 		NetworkInter.getRubymine(new ResponseHandler<Rubymine>(context.getMainLooper()) {
 
 			@Override
@@ -35,7 +35,7 @@ public class BeaconUpdateManager {
 				onRubymineFound(context, state, res);
 			}
 
-		}, Long.valueOf(beacon.getId2().toString()));
+		}, Long.valueOf(id.toString()));
 	}
 
 	private static void onRubymineFound(Context context, int state, Rubymine rubymine) {

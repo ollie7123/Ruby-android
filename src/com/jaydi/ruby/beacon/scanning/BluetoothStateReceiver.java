@@ -14,7 +14,6 @@ public class BluetoothStateReceiver extends BroadcastReceiver {
 
 	private static long lastBluetoothOffTime = 0l;
 	private static long lastBluetoothTurningOnTime = 0l;
-	private static boolean crashDetected;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -40,26 +39,12 @@ public class BluetoothStateReceiver extends BroadcastReceiver {
 				if (lastBluetoothTurningOnTime - lastBluetoothOffTime < SUSPICIOUSLY_SHORT_BLUETOOTH_OFF_INTERVAL_MILLIS) {
 					Log.e(TAG, "Bluetooth crash detected");
 					ScanningManager.startRecovery(context);
-					crashDetected = true;
 				}
 				break;
 			case BluetoothAdapter.STATE_TURNING_ON:
 				lastBluetoothTurningOnTime = new Date().getTime();
 				Log.d(TAG, "Bluetooth state is TURNING_ON");
 				break;
-			}
-		}
-
-		if (action.equals(BluetoothAdapter.ACTION_DISCOVERY_STARTED)) {
-			Log.d(TAG, "Bluetooth discovery started");
-		}
-
-		if (action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
-			Log.d(TAG, "Bluetooth discovery finished");
-			if (crashDetected) {
-				Log.e(TAG, "recovery finished. Restart bluetooth and scanning delayed");
-				ScanningManager.restartDelayed(context);
-				crashDetected = false;
 			}
 		}
 	}

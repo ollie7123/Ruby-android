@@ -1,9 +1,13 @@
 package com.jaydi.ruby.beacon.scanning;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -18,6 +22,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.jaydi.ruby.beacon.BeaconUpdateManager;
 
@@ -27,6 +32,7 @@ public class ScanningListener implements BeaconConsumer, RangeNotifier {
 
 	private Context context;
 	private BeaconManager beaconManager;
+	private Set<Identifier> ids;
 
 	@Override
 	public Context getApplicationContext() {
@@ -46,6 +52,7 @@ public class ScanningListener implements BeaconConsumer, RangeNotifier {
 	public void init(Context context) {
 		this.context = context;
 		beaconManager = BeaconManager.getInstanceForApplication(context);
+		ids = new HashSet<Identifier>();
 
 		// start beacon service
 		beaconManager.bind(this);
@@ -74,44 +81,87 @@ public class ScanningListener implements BeaconConsumer, RangeNotifier {
 
 	@Override
 	public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-		// process detected beacons
-		for (Beacon beacon : beacons)
-			processBeacon(beacon);
+		checkRegion(beacons);
+		countScanning();
 	}
 
-	private void processBeacon(Beacon beacon) {
-		if (filtBeacon(beacon)) {
-			saveExpirationTime(beacon);
-			BeaconUpdateManager.handleBeaconUpdate(context, beacon);
+	private void checkRegion(Collection<Beacon> beacons) {
+		// for visible beacons decide state by its distance and saved ids
+		for (Beacon beacon : beacons) {
+			if (!ids.contains(beacon.getId2())) {
+				if (beacon.getDistance() < Double.valueOf(beacon.getId3().toString()))
+					walkIn(beacon.getId2());
+			} else {
+				if (beacon.getDistance() > Double.valueOf(beacon.getId3().toString()))
+					walkOut(beacon.getId2());
+			}
+
+			// log detected beacon
+			ScanningLog.logBeacon(context, beacon);
 		}
 
-		// log detected beacon
-		ScanningLog.logBeacon(context, beacon);
+		// if saved beacons suddenly gets invisible, treat it as walk out
+		List<Identifier> exitedIds = new ArrayList<Identifier>();
+		for (Identifier id : ids) {
+			boolean exists = false;
+			for (Beacon beacon : beacons)
+				if (beacon.getId2().equals(id))
+					exists = true;
+
+			if (!exists)
+				exitedIds.add(id);
+		}
+
+		for (Identifier id : exitedIds)
+			walkOut(id);
 	}
 
-	private boolean filtBeacon(Beacon beacon) {
-		// return false if beacon is too far
-		if (beacon.getDistance() > Double.valueOf(beacon.getId3().toString()))
-			return false;
+	private void walkIn(Identifier id) {
+		ids.add(id);
 
-		// check if beacon is cached and not expired
-		long expirationTime = getExpirationTime(beacon);
+		// notify walk in if beacon id is not cached
+		if (!isCachedBeacon(id)) {
+			saveExpirationTime(id);
+			BeaconUpdateManager.handleBeaconUpdate(context, id);
+		}
+	}
+
+	private void walkOut(Identifier id) {
+		ids.remove(id);
+
+		// for crash protection
+		if (ids.isEmpty())
+			ScanningManager.forceFlush(context);
+	}
+
+	// for crash protection
+	private int count = 0;
+
+	// for crash protection
+	private void countScanning() {
+		if (++count % 1000 == 0)
+			ScanningManager.forceFlush(context);
+		Log.i("SL", "scan count: " + count);
+	}
+
+	private boolean isCachedBeacon(Identifier id) {
+		long expirationTime = getExpirationTime(id);
 		if (System.currentTimeMillis() < expirationTime)
-			return false;
-		else
 			return true;
+		else
+			return false;
 	}
 
-	private long getExpirationTime(Beacon beacon) {
+	private long getExpirationTime(Identifier id) {
 		SharedPreferences pref = getPref(context);
-		return pref.getLong(beacon.getId2().toString(), 0);
+		return pref.getLong(id.toString(), 0);
 	}
 
-	private void saveExpirationTime(Beacon beacon) {
+	private void saveExpirationTime(Identifier id) {
 		// cache beacon detection, expiration time is the midnight of today
 		SharedPreferences pref = getPref(context);
 		SharedPreferences.Editor editor = pref.edit();
-		editor.putLong(beacon.getId2().toString(), getMidnightTime());
+		editor.putLong(id.toString(), getMidnightTime());
 		editor.commit();
 	}
 

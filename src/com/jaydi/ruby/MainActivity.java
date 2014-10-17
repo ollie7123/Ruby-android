@@ -120,12 +120,15 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 			@Override
 			protected void onResponse(List<Rubyzone> res) {
 				Rubyzone rubyzone = new Rubyzone();
-				rubyzone.setId(2l);
-
 				double distance = Double.MAX_VALUE;
-				for (Rubyzone can : res)
-					if (CalUtils.calDistance(lat, lng, can.getLat(), can.getLng()) < distance)
+
+				for (Rubyzone can : res) {
+					double d = CalUtils.calDistance(lat, lng, can.getLat(), can.getLng());
+					if (d < distance) {
 						rubyzone = can;
+						distance = d;
+					}
+				}
 
 				MainActivity.this.rubyzone = rubyzone;
 				refreshContents();

@@ -1,4 +1,4 @@
-package com.jaydi.ruby.threading;
+package com.jaydi.ruby.connection.network;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.graphics.Bitmap;
 
 import com.jaydi.ruby.application.Cache;
+import com.jaydi.ruby.threading.Work;
 import com.jaydi.ruby.utils.BitmapUtils;
 
 public class ImageLoadWork extends Work<Bitmap> {

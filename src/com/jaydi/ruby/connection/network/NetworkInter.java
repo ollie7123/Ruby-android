@@ -21,7 +21,6 @@ import com.jaydi.ruby.R;
 import com.jaydi.ruby.application.Cache;
 import com.jaydi.ruby.application.RubyApplication;
 import com.jaydi.ruby.connection.ResponseHandler;
-import com.jaydi.ruby.threading.ImageLoadWork;
 import com.jaydi.ruby.threading.ThreadManager;
 import com.jaydi.ruby.threading.Work;
 

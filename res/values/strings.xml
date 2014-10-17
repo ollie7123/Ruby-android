@@ -5,8 +5,13 @@
     <string name="app_name">RubyMine</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    
+
     <!-- Activities -->
+    <string name="nav_collect">Collect Ruby</string>
+    <string name="nav_use">Use Ruby</string>
+    <string name="nav_mypage">My Page</string>
+
+    <!-- Titles -->
     <string name="title_activity_ruby">Ruby</string>
 
 </resources>

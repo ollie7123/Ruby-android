@@ -88,8 +88,12 @@
         </service>
 
         <activity
-            android:name="com.jaydi.ruby.MainActivity"
-            android:label="@string/app_name" >
+            android:name="com.jaydi.ruby.LoadingActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoTitle" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -97,8 +101,18 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.jaydi.ruby.MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="com.jaydi.ruby.RubyActivity"
-            android:label="@string/title_activity_ruby" >
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_ruby"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoTitle" >
         </activity>
     </application>
 

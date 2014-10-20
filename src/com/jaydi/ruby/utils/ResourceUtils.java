@@ -24,6 +24,6 @@ public class ResourceUtils {
 		if (key.startsWith("http"))
 			return key;
 		else
-			return "https://ruby-mine.appspot.com/serve?blob-key=" + key;
+			return "https://ruby-mine.appspot.com/image?blob-key=" + key;
 	}
 }

@@ -5,10 +5,12 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,9 +38,9 @@ public class RubymineFragment extends Fragment {
 		if (contents != null)
 			for (int i = 0; i < contents.size(); i++)
 				if (i % 2 == 0)
-					wrapper.addView(getTextView(contents.get(i)));
-				else
 					wrapper.addView(getImageView(contents.get(i)));
+				else
+					wrapper.addView(getTextView(contents.get(i)));
 
 		return view;
 	}
@@ -46,21 +48,24 @@ public class RubymineFragment extends Fragment {
 	private ImageView getImageView(String imageKey) {
 		ImageView imageView = new ImageView(getActivity());
 		imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		NetworkInter.getImage(imageView, ResourceUtils.getImageUrlFromKey(imageKey), 540, 0);
-
+		imageView.setScaleType(ScaleType.FIT_XY);
+		NetworkInter.getImage(imageView, ResourceUtils.getImageUrlFromKey(imageKey), 720, 0);
+		
 		return imageView;
 	}
 
 	private TextView getTextView(String text) {
 		int sideMargin = ResourceUtils.convertDpToPixel(30);
-		int verMargin = ResourceUtils.convertDpToPixel(30);
+		int verMargin = ResourceUtils.convertDpToPixel(10);
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT);
 		params.setMargins(sideMargin, verMargin, sideMargin, verMargin);
 
 		TextView textView = new TextView(getActivity());
 		textView.setLayoutParams(params);
-
+		textView.setGravity(Gravity.CENTER);
+		textView.setText(text);
+		
 		return textView;
 	}
 }

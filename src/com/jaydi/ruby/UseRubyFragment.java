@@ -42,9 +42,17 @@ public class UseRubyFragment extends MainFragment {
 				hideProgress();
 				if (res == null || res.getGems() == null)
 					return;
+				
+				gems.clear();
+				gems.addAll(res.getGems());
+				refresh();
 			}
 			
 		}, rubyzoneId);
+	}
+
+	private void refresh() {
+		gemAdapter.notifyDataSetChanged();
 	}
 
 	private void hideProgress() {

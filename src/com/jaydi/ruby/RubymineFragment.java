@@ -47,9 +47,9 @@ public class RubymineFragment extends Fragment {
 
 	private ImageView getImageView(String imageKey) {
 		ImageView imageView = new ImageView(getActivity());
-		imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		imageView.setScaleType(ScaleType.FIT_XY);
-		NetworkInter.getImage(imageView, ResourceUtils.getImageUrlFromKey(imageKey), 720, 0);
+		imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ResourceUtils.convertDpToPixel(360)));
+		imageView.setScaleType(ScaleType.CENTER_CROP);
+		NetworkInter.getImage(imageView, ResourceUtils.getImageUrlFromKey(imageKey), 720, 720);
 		
 		return imageView;
 	}

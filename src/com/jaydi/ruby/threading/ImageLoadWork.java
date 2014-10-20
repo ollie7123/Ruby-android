@@ -1,4 +1,4 @@
-package com.jaydi.ruby.connection.network;
+package com.jaydi.ruby.threading;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,22 +11,15 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.graphics.Bitmap;
 
-import com.jaydi.ruby.application.Cache;
-import com.jaydi.ruby.threading.Work;
+import com.jaydi.ruby.application.BitmapCache;
 import com.jaydi.ruby.utils.BitmapUtils;
 
 public class ImageLoadWork extends Work<Bitmap> {
 	private String url;
-	private int width = BitmapUtils.longSide;
-	private int height = BitmapUtils.longSide;
 
-	public ImageLoadWork(String url, int width, int height) {
+	public ImageLoadWork(String url) {
 		super();
 		this.url = url;
-		if (width != 0)
-			this.width = width;
-		if (height != 0)
-			this.height = height;
 	}
 
 	@Override
@@ -60,10 +53,10 @@ public class ImageLoadWork extends Work<Bitmap> {
 		try {
 			// getting contents from the stream
 			inputStream = entity.getContent();
-			Bitmap bitmap = BitmapUtils.decodeStreamScaledDown(inputStream, width, height);
-			Cache.addBitmapItem(url, bitmap);
-
+			Bitmap bitmap = BitmapUtils.decodeStreamScaledDown(inputStream, BitmapUtils.longSide, BitmapUtils.longSide);
+			BitmapCache.addBitmapItem(url, bitmap);
 			return bitmap;
+
 		} catch (Exception e) {
 			System.out.println("exception on input stream");
 			return null;

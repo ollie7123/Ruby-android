@@ -18,9 +18,12 @@ import com.appspot.ruby_mine.rubymine.model.Userpair;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.json.gson.GsonFactory;
 import com.jaydi.ruby.R;
-import com.jaydi.ruby.application.Cache;
+import com.jaydi.ruby.application.BitmapCache;
 import com.jaydi.ruby.application.RubyApplication;
 import com.jaydi.ruby.connection.ResponseHandler;
+import com.jaydi.ruby.threading.ImageFileLoadWork;
+import com.jaydi.ruby.threading.ImageLoadWork;
+import com.jaydi.ruby.threading.ImageUploadWork;
 import com.jaydi.ruby.threading.ThreadManager;
 import com.jaydi.ruby.threading.Work;
 
@@ -52,32 +55,58 @@ public class NetworkInter {
 
 		return status;
 	}
+	
+	public static <T> void insertImageFromFile(Handler handler, String path) {
+		ThreadManager.execute(new ImageUploadWork(path), handler);
+	}
 
 	public static <T> void getImage(final ImageView imageView, String url, int width, int height) {
 		if (url == null || url.isEmpty())
 			return;
 
-		StringBuilder sb = new StringBuilder(url);
-		if (sb.indexOf("?") != -1)
-			sb.append("&width=").append(width).append("&height=").append(height);
-		url = sb.toString();
-		Bitmap bitmap = Cache.getBitmapItem(url);
+		if (url.startsWith("http"))
+			url = buildResizingUrl(url, width, height);
+		// get cached bitmap
+		Bitmap bitmap = BitmapCache.getBitmapItem(url);
 
+		// set bitmap right away if cache exists
 		if (imageView != null && bitmap != null)
 			imageView.setImageBitmap(bitmap);
-		else
-			ThreadManager.execute(new ImageLoadWork(url, width, height), new ResponseHandler<Bitmap>() {
+		else if (url.startsWith("http"))
+			ThreadManager.execute(new ImageLoadWork(url), new ResponseHandler<Bitmap>() {
 
 				@Override
 				protected void onResponse(Bitmap response) {
-					if (imageView != null && response != null) {
-						Animation fadeIn = AnimationUtils.loadAnimation(RubyApplication.getInstance(), R.anim.fade_in);
-						imageView.startAnimation(fadeIn);
-						imageView.setImageBitmap(response);
-					}
+					if (imageView == null || response == null)
+						return;
+
+					Animation fadeIn = AnimationUtils.loadAnimation(RubyApplication.getInstance(), R.anim.fade_in);
+					imageView.startAnimation(fadeIn);
+					imageView.setImageBitmap(response);
 				}
 
 			});
+		else if (url.startsWith("/"))
+			ThreadManager.execute(new ImageFileLoadWork(url, width, height), new ResponseHandler<Bitmap>() {
+
+				@Override
+				protected void onResponse(Bitmap response) {
+					if (imageView == null || response == null)
+						return;
+
+					Animation fadeIn = AnimationUtils.loadAnimation(RubyApplication.getInstance(), R.anim.fade_in);
+					imageView.startAnimation(fadeIn);
+					imageView.setImageBitmap(response);
+				}
+
+			});
+	}
+
+	private static String buildResizingUrl(String url, int width, int height) {
+		StringBuilder sb = new StringBuilder(url);
+		if (sb.indexOf("?") != -1)
+			sb.append("&width=").append(width).append("&height=").append(height);
+		return sb.toString();
 	}
 
 	public static <T> void insertUser(Handler handler, final User user) {

@@ -8,6 +8,8 @@ import org.apache.commons.io.IOUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 
 public class BitmapUtils {
 	public static int longSide = 720;
@@ -33,6 +35,18 @@ public class BitmapUtils {
 		return BitmapFactory.decodeByteArray(data, 0, data.length, options);
 	}
 
+	public static Bitmap decodeFileScaledDown(String path, int reqWidth, int reqHeight) {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path, options);
+
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+		options.inJustDecodeBounds = false;
+
+		return BitmapFactory.decodeFile(path, options);
+	}
+
 	private static int calculateInSampleSize(Options options, int reqWidth, int reqHeight) {
 		final int width = options.outWidth;
 		final int height = options.outHeight;
@@ -46,5 +60,37 @@ public class BitmapUtils {
 		}
 
 		return inSampleSize;
+	}
+
+	public static Bitmap fixOrientation(String imagePath, Bitmap result) {
+		int orientation = 1;
+
+		try {
+			ExifInterface exif = new ExifInterface(imagePath);
+			orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		switch (orientation) {
+		case ExifInterface.ORIENTATION_ROTATE_90:
+			result = rotate(result, 90);
+			break;
+		case ExifInterface.ORIENTATION_ROTATE_180:
+			result = rotate(result, 180);
+			break;
+		case ExifInterface.ORIENTATION_ROTATE_270:
+			result = rotate(result, 270);
+			break;
+		}
+
+		return result;
+	}
+
+	private static Bitmap rotate(Bitmap result, int rotation) {
+		Matrix matrix = new Matrix();
+		matrix.setRotate(rotation, (float) result.getWidth() / 2, (float) result.getHeight() / 2);
+
+		return Bitmap.createBitmap(result, 0, 0, result.getWidth(), result.getHeight(), matrix, true);
 	}
 }

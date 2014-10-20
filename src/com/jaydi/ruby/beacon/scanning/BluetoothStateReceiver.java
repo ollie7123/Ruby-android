@@ -27,7 +27,7 @@ public class BluetoothStateReceiver extends BroadcastReceiver {
 				break;
 			case BluetoothAdapter.STATE_OFF:
 				Log.d(TAG, "Bluetooth state is OFF");
-				ScanningManager.turnOffScanning(context);
+				ScanningManager.termScanningListener();
 				lastBluetoothOffTime = new Date().getTime();
 				break;
 			case BluetoothAdapter.STATE_TURNING_OFF:

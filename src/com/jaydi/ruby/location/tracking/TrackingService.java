@@ -71,7 +71,7 @@ public class TrackingService extends Service implements GooglePlayServicesClient
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
 
-		if (!servicesAvailable || locationClient.isConnected() || inProgress)
+		if (!servicesAvailable || inProgress)
 			return START_STICKY;
 
 		setLocationClient();

@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 public class ScanningManager {
 	private static final String PREF_SCANNING_MANAGER = "prefScanningManager";
@@ -15,41 +14,27 @@ public class ScanningManager {
 	// beacon scanning listener
 	private static ScanningListener scanningListener;
 
-	public static void turnOnScanning(Context context) {
-		turnOnBluetooth(context);
-		initScanningListener(context);
-	}
-
-	private static void turnOnBluetooth(Context context) {
-		// turn on bluetooth and mark original state
+	public static void turnOnBluetooth() {
+		// turn on bluetooth
 		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-		if (!adapter.isEnabled()) {
+		if (!adapter.isEnabled())
 			adapter.enable();
-			savePreState(context, false);
-		} else
-			savePreState(context, true);
 	}
 
-	private static void initScanningListener(Context context) {
+	public static void turnOffBluetooth() {
+		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+		if (adapter.isEnabled())
+			adapter.disable();
+	}
+
+	public static void initScanningListener(Context context) {
 		if (scanningListener == null) {
 			scanningListener = new ScanningListener();
 			scanningListener.init(context.getApplicationContext());
 		}
 	}
 
-	public static void turnOffScanning(Context context) {
-		if (!getPreState(context))
-			turnOffBluetooth();
-		termScanningListener();
-	}
-
-	private static void turnOffBluetooth() {
-		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-		if (adapter.isEnabled())
-			adapter.disable();
-	}
-
-	private static void termScanningListener() {
+	public static void termScanningListener() {
 		if (scanningListener != null) {
 			scanningListener.term();
 			scanningListener = null;
@@ -108,17 +93,16 @@ public class ScanningManager {
 		manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000 * 5), pendingIntent);
 	}
 
-	private static boolean getPreState(Context context) {
-		SharedPreferences pref = getPref(context);
-		return pref.getBoolean(KEY_PRE_STATE, false);
-	}
-
-	private static void savePreState(Context context, boolean state) {
-		Log.i("SM", "pre state: " + state);
+	public static void saveBluetoothState(Context context) {
 		SharedPreferences pref = getPref(context);
 		SharedPreferences.Editor editor = pref.edit();
-		editor.putBoolean(KEY_PRE_STATE, state);
+		editor.putBoolean(KEY_PRE_STATE, BluetoothAdapter.getDefaultAdapter().isEnabled());
 		editor.commit();
+	}
+
+	public static boolean wasBluetoothOn(Context context) {
+		SharedPreferences pref = getPref(context);
+		return pref.getBoolean(KEY_PRE_STATE, false);
 	}
 
 	private static SharedPreferences getPref(Context context) {

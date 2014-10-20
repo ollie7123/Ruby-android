@@ -1,5 +1,6 @@
 package com.jaydi.ruby;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,7 +31,8 @@ public class LoadingActivity extends BaseActivity {
 	}
 
 	private void initBeaconScanning() {
-		ScanningManager.turnOnScanning(RubyApplication.getInstance());
+		ScanningManager.turnOnBluetooth();
+		ScanningManager.initScanningListener(RubyApplication.getInstance());
 	}
 
 	private void initBackgroundTracking() {
@@ -79,7 +81,7 @@ public class LoadingActivity extends BaseActivity {
 						return;
 
 					LocalUser.setUser(res);
-					goToMainDelayed();
+					goToProfile();
 				}
 
 			}, new User());
@@ -87,6 +89,12 @@ public class LoadingActivity extends BaseActivity {
 			goToMainDelayed();
 	}
 
+	private void goToProfile() {
+		Intent intent = new Intent(this, ProfileActivity.class);
+		startActivity(intent);
+	}
+
+	@SuppressLint("HandlerLeak")
 	private void goToMainDelayed() {
 		new Handler() {
 

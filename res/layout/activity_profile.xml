@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context="com.jaydi.ruby.ProfileActivity" >
+
+    <ImageView
+        android:id="@+id/image_profile_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="100dp"
+        android:background="@color/light"
+        android:onClick="getImage"
+        android:scaleType="centerCrop" />
+
+    <EditText
+        android:id="@+id/edit_profile_nickname"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/nickname"
+        android:inputType="text" />
+
+    <Button
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_pink_red"
+        android:onClick="confirmProfile"
+        android:text="@string/confirm"
+        android:textColor="@color/white" />
+
+</LinearLayout>

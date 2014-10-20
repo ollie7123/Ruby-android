@@ -101,6 +101,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.jaydi.ruby.ProfileActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_profile"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoTitle" >
+        </activity>
+        <activity
             android:name="com.jaydi.ruby.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"

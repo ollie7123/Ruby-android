@@ -7,11 +7,15 @@
     <string name="action_settings">Settings</string>
 
     <!-- Activities -->
+    <string name="nickname">Nickname</string>
+    <string name="confirm">Confirm</string>
     <string name="nav_collect">Collect Ruby</string>
     <string name="nav_use">Use Ruby</string>
     <string name="nav_mypage">My Page</string>
 
     <!-- Titles -->
     <string name="title_activity_ruby">Ruby</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="waiting_message">Please wait...</string>
 
 </resources>

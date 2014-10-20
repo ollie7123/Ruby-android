@@ -17,8 +17,10 @@ public class ScanningCommandReceiver extends BroadcastReceiver {
 		if (intent.getAction().equals(ACTION_RESTART_DELAYED))
 			ScanningManager.restartDelayed(context);
 
-		if (intent.getAction().equals(ACTION_START_SCANNING))
-			ScanningManager.turnOnScanning(context);
+		if (intent.getAction().equals(ACTION_START_SCANNING)) {
+			ScanningManager.turnOnBluetooth();
+			ScanningManager.initScanningListener(context);
+		}
 	}
 
 }

@@ -14,10 +14,10 @@ import android.graphics.Bitmap;
 import com.jaydi.ruby.application.BitmapCache;
 import com.jaydi.ruby.utils.BitmapUtils;
 
-public class ImageLoadWork extends Work<Bitmap> {
+public class ImageDownloadWork extends Work<Bitmap> {
 	private String url;
 
-	public ImageLoadWork(String url) {
+	public ImageDownloadWork(String url) {
 		super();
 		this.url = url;
 	}

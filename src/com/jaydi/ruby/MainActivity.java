@@ -5,7 +5,10 @@ import java.util.List;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.appspot.ruby_mine.rubymine.model.Rubyzone;
 import com.google.android.gms.common.ConnectionResult;
@@ -15,25 +18,22 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.jaydi.ruby.application.RubyApplication;
+import com.jaydi.ruby.beacon.scanning.ScanningManager;
 import com.jaydi.ruby.connection.ResponseHandler;
 import com.jaydi.ruby.connection.database.DatabaseInter;
+import com.jaydi.ruby.user.LocalUser;
 import com.jaydi.ruby.utils.CalUtils;
 import com.jaydi.ruby.utils.ResourceUtils;
 
 public class MainActivity extends BaseActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
-	// constants for location updates
-	public static final long UPDATE_INTERVAL = 3 * 1000;
-	public static final long FASTEST_INTERVAL = 1 * 1000;
-	public static final String NAV_COLLECT = "nav_collect";
-	public static final String NAV_USE = "nav_collect";
-	public static final String NAV_MYPAGE = "nav_mypage";
-
 	private Rubyzone rubyzone;
 
 	// location service variables
 	private LocationClient locationClient;
 
 	// ui variables
+	private TextView textRubyInfo;
 	private int navPosition;
 
 	@Override
@@ -41,13 +41,43 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		// get location info to set current rubyzone
-		initLocation();
+		// prepare ruby info view
+		prepareRubyInfoView();
 
 		// prepare navigation menu and content fragments
 		navPosition = 0;
 		updateNavMenu();
 		prepareFragments();
+
+		// start beacon scanner
+		initBeaconScanning();
+		// get location info to set current rubyzone
+		initLocation();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		setRubyInfo();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		// set ruby info view on action bar
+		menu.add("ruby").setActionView(textRubyInfo).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		return true;
+	}
+
+	private void prepareRubyInfoView() {
+		textRubyInfo = new TextView(this);
+		textRubyInfo.setPadding(0, 0, ResourceUtils.convertDpToPixel(18), 0);
+		textRubyInfo.setTextSize(18);
+		textRubyInfo.setTextColor(getResources().getColor(R.color.white));
+	}
+
+	private void setRubyInfo() {
+		textRubyInfo.setText(LocalUser.getUser().getRuby() + " " + ResourceUtils.getString(R.string.ruby));
 	}
 
 	private void prepareFragments() {
@@ -56,6 +86,11 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 		ft.add(R.id.frame_main_container_use, new UseRubyFragment());
 		ft.add(R.id.frame_main_container_mypage, new MyPageFragment());
 		ft.commit();
+	}
+
+	private void initBeaconScanning() {
+		ScanningManager.turnOnBluetooth();
+		ScanningManager.initScanningListener(RubyApplication.getInstance());
 	}
 
 	private void initLocation() {
@@ -98,9 +133,9 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 		// use power accuracy balanced priority
 		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 		// set interval
-		locationRequest.setInterval(UPDATE_INTERVAL);
+		locationRequest.setInterval(1000 * 3);
 		// set fastest interval
-		locationRequest.setFastestInterval(FASTEST_INTERVAL);
+		locationRequest.setFastestInterval(1000 * 1);
 		locationClient.requestLocationUpdates(locationRequest, this);
 	}
 

@@ -2,12 +2,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context="com.jaydi.ruby.RubyActivity" >
 
-    <TextView
-        android:id="@+id/text_ruby_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="360dp"
+        android:layout_gravity="center"
+        android:background="@color/transparent_pink_red"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_ruby" />
+
+        <TextView
+            android:id="@+id/text_ruby_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/selector_pink_red"
+            android:gravity="center"
+            android:onClick="goToMain"
+            android:text="@string/get_ruby"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </LinearLayout>
 
 </FrameLayout>

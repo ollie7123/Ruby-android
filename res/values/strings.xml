@@ -3,6 +3,7 @@
 
     <!-- application -->
     <string name="app_name">RubyMine</string>
+    <string name="ruby">Ruby</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
@@ -12,10 +13,13 @@
     <string name="nav_collect">Collect Ruby</string>
     <string name="nav_use">Use Ruby</string>
     <string name="nav_mypage">My Page</string>
+    <string name="ruby_message" formatted="false">Found Ruby In %s!</string>
+    <string name="get_ruby">Get Ruby</string>
 
     <!-- Titles -->
     <string name="title_activity_ruby">Ruby</string>
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="waiting_message">Please wait...</string>
+    <string name="title_activity_recommend">RecommendActivity</string>
 
 </resources>

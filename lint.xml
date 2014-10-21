@@ -8,4 +8,5 @@
     <issue id="SdCardPath" severity="ignore" />
     <issue id="SmallSp" severity="ignore" />
     <issue id="TextFields" severity="ignore" />
+    <issue id="TypographyEllipsis" severity="ignore" />
 </lint>

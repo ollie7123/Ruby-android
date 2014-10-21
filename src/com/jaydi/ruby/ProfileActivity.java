@@ -78,7 +78,7 @@ public class ProfileActivity extends BaseActivity implements OnPictureOptionClic
 
 	private void setImage() {
 		ImageView imageImage = (ImageView) findViewById(R.id.image_profile_image);
-		NetworkInter.getImage(imageImage, imagePath, 300, 300);
+		NetworkInter.getImage(null, imageImage, imagePath, 300, 300);
 	}
 
 	public void confirmProfile(View view) {
@@ -92,7 +92,7 @@ public class ProfileActivity extends BaseActivity implements OnPictureOptionClic
 	}
 
 	private void sendProfileWithImage() {
-		NetworkInter.insertImageFromFile(new ResponseHandler<String>(DialogUtils.showWaitingDialog(this)) {
+		NetworkInter.uploadImage(new ResponseHandler<String>(DialogUtils.showWaitingDialog(this)) {
 
 			@Override
 			protected void onResponse(String imageKey) {

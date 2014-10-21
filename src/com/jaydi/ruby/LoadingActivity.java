@@ -9,7 +9,6 @@ import android.os.Message;
 import com.appspot.ruby_mine.rubymine.model.RubyzoneCol;
 import com.appspot.ruby_mine.rubymine.model.User;
 import com.jaydi.ruby.application.RubyApplication;
-import com.jaydi.ruby.beacon.scanning.ScanningManager;
 import com.jaydi.ruby.connection.ResponseHandler;
 import com.jaydi.ruby.connection.database.DatabaseInter;
 import com.jaydi.ruby.connection.network.NetworkInter;
@@ -23,16 +22,8 @@ public class LoadingActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_loading);
 
-		// is it in the right place?
-		initBeaconScanning();
-
 		initBackgroundTracking();
 		getUserReady();
-	}
-
-	private void initBeaconScanning() {
-		ScanningManager.turnOnBluetooth();
-		ScanningManager.initScanningListener(RubyApplication.getInstance());
 	}
 
 	private void initBackgroundTracking() {
@@ -85,13 +76,27 @@ public class LoadingActivity extends BaseActivity {
 				}
 
 			}, new User());
-		else
+		else {
+			refreshUser();
 			goToMainDelayed();
+		}
 	}
 
 	private void goToProfile() {
 		Intent intent = new Intent(this, ProfileActivity.class);
 		startActivity(intent);
+	}
+
+	private void refreshUser() {
+		NetworkInter.getUser(new ResponseHandler<User>() {
+
+			@Override
+			protected void onResponse(User res) {
+				if (res != null)
+					LocalUser.setUser(res);
+			}
+
+		}, LocalUser.getUser().getId());
 	}
 
 	@SuppressLint("HandlerLeak")

@@ -19,7 +19,7 @@ public class RubyUtils {
 
 	public static void popupRuby(Context context, Rubymine rubymine) {
 		Intent intent = new Intent(context, RubyActivity.class);
-		intent.putExtra("com.jaydi.ruby.rubyminename", rubymine.getName());
+		intent.putExtra(RubyActivity.EXTRA_RUBYMINE_NAME, rubymine.getName());
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(intent);
 
@@ -30,7 +30,7 @@ public class RubyUtils {
 
 	public static void notifyRuby(Context context, Rubymine rubymine) {
 		Intent intent = new Intent(context, RubyActivity.class);
-		intent.putExtra("com.jaydi.ruby.rubyminename", rubymine.getName());
+		intent.putExtra(RubyActivity.EXTRA_RUBYMINE_NAME, rubymine.getName());
 
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 		stackBuilder.addParentStack(MainActivity.class);
@@ -40,12 +40,12 @@ public class RubyUtils {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		builder.setAutoCancel(true);
 		builder.setSmallIcon(R.drawable.ic_launcher);
-		builder.setContentTitle("RubyMine");
-		builder.setContentText("found ruby in " + rubymine.getName());
+		builder.setContentTitle(ResourceUtils.getString(R.string.app_name));
+		builder.setContentText(String.format(ResourceUtils.getString(R.string.ruby_message), rubymine.getName()));
 		builder.setContentIntent(resultPendingIntent);
 
-		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.notify(rubymine.getId().intValue(), builder.build());
+		NotificationManager notiManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		notiManager.notify(rubymine.getId().intValue(), builder.build());
 
 		vibrate();
 	}
@@ -54,8 +54,7 @@ public class RubyUtils {
 		BaseActivity activity = RubyApplication.getInstance().getOnScreenActivity();
 		if (activity != null)
 			activity.toastRuby(rubymine);
-		else
-			notifyRuby(context, rubymine);
+		notifyRuby(context, rubymine);
 
 		vibrate();
 	}

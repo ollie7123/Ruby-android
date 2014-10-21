@@ -11,15 +11,14 @@ import android.content.DialogInterface.OnClickListener;
 import com.jaydi.ruby.R;
 
 public class DialogUtils {
-	public static void networkAlert(final Context context, final boolean finishable) {
+	public static void networkAlert(final Context context) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Network Error");
 		builder.setPositiveButton("Close", new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				if (finishable)
-					((Activity) context).finish();
+				((Activity) context).finish();
 			}
 
 		});

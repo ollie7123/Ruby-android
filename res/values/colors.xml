@@ -2,7 +2,7 @@
 <resources>
 
     <color name="white">#FFFFFF</color>
-    <color name="light">#CCCCCC</color>
+    <color name="light">#EEEEEE</color>
     <color name="green_blue">#3C9CB2</color>
     <color name="pink_red">#EB6468</color>
     <color name="dark_pink_red">#EE6771</color>

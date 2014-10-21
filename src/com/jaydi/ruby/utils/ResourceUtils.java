@@ -21,6 +21,8 @@ public class ResourceUtils {
 	}
 
 	public static String getImageUrlFromKey(String key) {
+		if (key == null || key.isEmpty())
+			return "";
 		if (key.startsWith("http"))
 			return key;
 		else

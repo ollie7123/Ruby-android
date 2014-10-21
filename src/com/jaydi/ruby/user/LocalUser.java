@@ -10,6 +10,7 @@ public class LocalUser {
 	private static final String PREF_USER = "prefUser";
 	private static final String PROPERTY_ID = "propertyId";
 	private static final String PROPERTY_NAME = "propertyName";
+	private static final String PROPERTY_IMAGE_KEY = "propertyImageKey";
 	private static final String PROPERTY_LEVEL = "propertyLevel";
 	private static final String PROPERTY_RUBY = "propertyRuby";
 
@@ -30,6 +31,7 @@ public class LocalUser {
 		SharedPreferences.Editor editor = getPref().edit();
 		editor.putLong(PROPERTY_ID, user.getId());
 		editor.putString(PROPERTY_NAME, user.getName());
+		editor.putString(PROPERTY_IMAGE_KEY, user.getImageKey());
 		editor.putInt(PROPERTY_LEVEL, user.getLevel());
 		editor.putInt(PROPERTY_RUBY, user.getRuby());
 		editor.commit();
@@ -40,6 +42,7 @@ public class LocalUser {
 		SharedPreferences pref = getPref();
 		user.setId(pref.getLong(PROPERTY_ID, 0));
 		user.setName(pref.getString(PROPERTY_NAME, ""));
+		user.setImageKey(pref.getString(PROPERTY_IMAGE_KEY, ""));
 		user.setLevel(pref.getInt(PROPERTY_LEVEL, 0));
 		user.setRuby(pref.getInt(PROPERTY_RUBY, 0));
 		return user;

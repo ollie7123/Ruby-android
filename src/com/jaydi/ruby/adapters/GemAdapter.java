@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.appspot.ruby_mine.rubymine.model.Gem;
 import com.jaydi.ruby.R;
+import com.jaydi.ruby.connection.ResponseHandler;
 import com.jaydi.ruby.connection.network.NetworkInter;
 import com.jaydi.ruby.utils.ResourceUtils;
 
@@ -42,18 +43,25 @@ public class GemAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Gem gem = (Gem) getItem(position);
+		final Gem gem = (Gem) getItem(position);
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.adapted_gem_layout, parent, false);
+		final View view = inflater.inflate(R.layout.adapted_gem_layout, parent, false);
 
 		ImageView image = (ImageView) view.findViewById(R.id.image_adapted_gem_image);
-		NetworkInter.getImage(image, ResourceUtils.getImageUrlFromKey(gem.getImageKey()), 270, 360);
+		NetworkInter.getImage(new ResponseHandler<Void>() {
 
-		TextView name = (TextView) view.findViewById(R.id.text_adapted_gem_name);
-		name.setText(gem.getRubymineName() + "\n" + gem.getName());
+			@Override
+			protected void onResponse(Void res) {
+				view.findViewById(R.id.progressbar_adapted_gem_loading).setVisibility(View.GONE);
 
-		TextView value = (TextView) view.findViewById(R.id.text_adapted_gem_value);
-		value.setText("" + gem.getValue());
+				TextView name = (TextView) view.findViewById(R.id.text_adapted_gem_name);
+				name.setText(gem.getRubymineName() + "\n" + gem.getName());
+
+				TextView value = (TextView) view.findViewById(R.id.text_adapted_gem_value);
+				value.setText("" + gem.getValue());
+			}
+
+		}, image, ResourceUtils.getImageUrlFromKey(gem.getImageKey()), 270, 360);
 
 		return view;
 	}

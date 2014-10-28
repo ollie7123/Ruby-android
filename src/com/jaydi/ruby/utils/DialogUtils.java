@@ -22,15 +22,58 @@ public class DialogUtils {
 			}
 
 		});
-
 		builder.show();
 	}
 
 	public static Dialog showWaitingDialog(Context context) {
 		ProgressDialog progressDlg = new ProgressDialog(context);
 		progressDlg.setMessage(ResourceUtils.getString(R.string.waiting_message));
-		progressDlg.setCancelable(true);
+		progressDlg.setCancelable(false);
 		progressDlg.show();
 		return progressDlg;
+	}
+
+	public static void showNeedRubyDialog(Context context) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle("Need more ruby");
+		builder.setPositiveButton("Close", new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+
+		});
+		builder.show();
+	}
+
+	public static void showBuyCouponDialog(Context context, OnClickListener buyCouponListener) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle("Are you sure?");
+		builder.setPositiveButton("Yes", buyCouponListener);
+		builder.setNegativeButton("No", new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+			
+		});
+		builder.show();
+	}
+
+	public static void showUseCouponDialog(Context context, OnClickListener useCouponListener) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle("Are you sure?");
+		builder.setPositiveButton("Yes", useCouponListener);
+		builder.setNegativeButton("No", new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+			
+		});
+		builder.show();
 	}
 }

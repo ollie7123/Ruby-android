@@ -7,7 +7,8 @@ import android.os.Message;
 
 import com.google.api.client.json.GenericJson;
 import com.google.gson.Gson;
-import com.jaydi.ruby.utils.ErrorResponse;
+import com.jaydi.ruby.connection.network.ErrorResponse;
+import com.jaydi.ruby.models.BaseModel;
 
 public abstract class ResponseHandler<T> extends Handler {
 	private Dialog dialog;
@@ -39,22 +40,33 @@ public abstract class ResponseHandler<T> extends Handler {
 
 	@SuppressWarnings("unchecked")
 	private void processResponse(Object res) {
-		errorCheck(res);
-		onResponse((T) res);
-	}
+		if (res == null)
+			onResponse((T) res);
 
-	private void errorCheck(Object res) {
 		try {
 			String json = ((GenericJson) res).toString();
-			BaseModel model = new Gson().fromJson(json, BaseModel.class);
+			BaseModel bmRes = new Gson().fromJson(json, BaseModel.class);
 
-			int resultCode = model.getResultCode();
-			if (resultCode != 0)
-				ErrorResponse.showErrorResponse(resultCode);
+			errorCheck(bmRes);
 
 		} catch (ClassCastException e) {
+			onResponse((T) res);
 		} catch (NullPointerException e) {
+			onResponse((T) res);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void errorCheck(BaseModel bmRes) {
+		int resultCode = bmRes.getResultCode();
+		if (resultCode != 0)
+			onError(resultCode);
+		else
+			onResponse((T) bmRes);
+	}
+
+	protected void onError(int resultCode) {
+		ErrorResponse.showErrorResponse(resultCode);
 	}
 
 	protected abstract void onResponse(T res);

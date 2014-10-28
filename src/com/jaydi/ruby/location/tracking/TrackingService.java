@@ -9,6 +9,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -18,6 +19,7 @@ import com.google.android.gms.location.LocationRequest;
 
 public class TrackingService extends Service implements GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener {
+	public static boolean isOnRequest = false;
 
 	private LocationClient locationClient;
 	private LocationRequest locationRequest;
@@ -39,8 +41,9 @@ public class TrackingService extends Service implements GooglePlayServicesClient
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
-		TrackingSettings.setOnRequest(this, false);
+		Log.i("TS", "CREATE");
+		
+		isOnRequest = false;
 		inProgress = false;
 		// create location request object
 		locationRequest = LocationRequest.create();
@@ -58,6 +61,8 @@ public class TrackingService extends Service implements GooglePlayServicesClient
 	}
 
 	private boolean servicesConnected() {
+		Log.i("TS", "SERVICE CONNECTED");
+		
 		// check if google play service is available
 		int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 
@@ -70,6 +75,7 @@ public class TrackingService extends Service implements GooglePlayServicesClient
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
+		Log.i("TS", "START");
 
 		if (!servicesAvailable || inProgress)
 			return START_STICKY;
@@ -96,13 +102,15 @@ public class TrackingService extends Service implements GooglePlayServicesClient
 
 	@Override
 	public void onConnected(Bundle bundle) {
+		Log.i("TS", "LOCATION CLIENT CREATE");
+		
 		// set the receiver which gets location update
 		Intent intent = new Intent(this, TrackingReceiver.class);
 		locationIntent = PendingIntent.getBroadcast(this, 3143, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 		// request location update to location client
 		locationClient.requestLocationUpdates(locationRequest, locationIntent);
 		// set working state setting to be true
-		TrackingSettings.setOnRequest(this, true);
+		isOnRequest = true;
 		// start restart alarm
 		setRestartAlarm(true);
 		TrackingLog.logMsg(this, "Service Connected");
@@ -125,12 +133,13 @@ public class TrackingService extends Service implements GooglePlayServicesClient
 
 	@Override
 	public void onDisconnected() {
+		Log.i("TS", "LOCATION CLIENT DISCONNECTED");
 		// turn off request flag
 		inProgress = false;
 		// destroy current location client
 		locationClient = null;
 		// set working state setting to be false
-		TrackingSettings.setOnRequest(this, false);
+		isOnRequest = false;
 		// cancel restart alarm
 		setRestartAlarm(false);
 		TrackingLog.logMsg(this, "Service Disconnected");
@@ -148,6 +157,7 @@ public class TrackingService extends Service implements GooglePlayServicesClient
 
 	@Override
 	public void onDestroy() {
+		Log.i("TS", "DESTROY");
 		// turn off request flag
 		inProgress = false;
 		if (servicesAvailable && locationClient != null) {
@@ -157,7 +167,7 @@ public class TrackingService extends Service implements GooglePlayServicesClient
 			locationClient = null;
 		}
 		// set working state setting to be false
-		TrackingSettings.setOnRequest(this, false);
+		isOnRequest = false;
 		// cancel restart alarm
 		setRestartAlarm(false);
 		TrackingLog.logMsg(this, "Service Stopped");

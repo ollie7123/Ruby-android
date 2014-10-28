@@ -22,6 +22,8 @@ public class CollectRubyFragment extends MainFragment implements OnPageChangeLis
 	private ViewPager minePager;
 	private MinePagerAdapter minePagerAdapter;
 
+	private boolean loaded;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		view = inflater.inflate(R.layout.fragment_main_collect_ruby, container, false);
@@ -32,11 +34,16 @@ public class CollectRubyFragment extends MainFragment implements OnPageChangeLis
 		minePager.setAdapter(minePagerAdapter);
 		minePager.setOnPageChangeListener(this);
 
+		loaded = false;
+
 		return view;
 	}
 
 	@Override
 	public void loadContents(long rubyzoneId) {
+		if (loaded)
+			return;
+
 		NetworkInter.getRubymines(new ResponseHandler<RubymineCol>() {
 
 			@Override
@@ -51,6 +58,8 @@ public class CollectRubyFragment extends MainFragment implements OnPageChangeLis
 			}
 
 		}, rubyzoneId);
+
+		loaded = true;
 	}
 
 	private void hideProgress() {

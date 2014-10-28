@@ -1,0 +1,16 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.jaydi.ruby.RubyActivity" >
+
+    <Button
+        android:id="@+id/button_more_mycoupons"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/selector_white"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="15dp"
+        android:text="@string/my_coupons" />
+
+</LinearLayout>

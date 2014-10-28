@@ -1,7 +1,8 @@
-package com.jaydi.ruby.utils;
+package com.jaydi.ruby.connection.network;
 
 import com.jaydi.ruby.R;
-import com.jaydi.ruby.connection.BaseModel;
+import com.jaydi.ruby.models.BaseModel;
+import com.jaydi.ruby.utils.ToastUtils;
 
 public class ErrorResponse {
 

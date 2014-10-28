@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 public class ThreadManager<T> implements Runnable {
 	private static ExecutorService executorService = Executors.newCachedThreadPool();
@@ -23,6 +24,8 @@ public class ThreadManager<T> implements Runnable {
 		this.handler = handler;
 	}
 
+	private int rc = 0;
+
 	@Override
 	public void run() {
 		try {
@@ -32,8 +35,20 @@ public class ThreadManager<T> implements Runnable {
 				m.obj = response;
 				handler.sendMessage(m);
 			}
+			
+			rc = 0;
+
 		} catch (IOException e) {
-			e.printStackTrace();
+			retry();
 		}
+	}
+	
+	private void retry() {
+		if (rc < 2) {
+			rc ++;
+			Log.i("WORK", "work crahsed, try again " + rc);
+			run();
+		} else
+			rc = 0;
 	}
 }

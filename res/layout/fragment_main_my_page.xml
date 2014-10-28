@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:background="@color/light"
         android:gravity="center"
         android:orientation="vertical" >
@@ -24,6 +24,14 @@
             android:layout_height="wrap_content"
             android:padding="2dp"
             android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/button_my_page_edit_profile"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_pink_red"
+        android:text="@string/edit_profile"
+        android:textColor="@color/white" />
     </LinearLayout>
 
     <TextView
@@ -33,5 +41,14 @@
         android:layout_gravity="center_horizontal"
         android:padding="2dp"
         android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/button_my_page_upgrade_level"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/selector_pink_red"
+        android:text="@string/upgrade_my_social_level"
+        android:textColor="@color/white" />
 
 </LinearLayout>

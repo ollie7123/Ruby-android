@@ -40,7 +40,7 @@ public class LocalUser {
 	private static User loadUser() {
 		User user = new User();
 		SharedPreferences pref = getPref();
-		user.setId(pref.getLong(PROPERTY_ID, 0));
+		user.setId((pref.getLong(PROPERTY_ID, 0) != 0) ? pref.getLong(PROPERTY_ID, 0) : null);
 		user.setName(pref.getString(PROPERTY_NAME, ""));
 		user.setImageKey(pref.getString(PROPERTY_IMAGE_KEY, ""));
 		user.setLevel(pref.getInt(PROPERTY_LEVEL, 0));
@@ -49,7 +49,7 @@ public class LocalUser {
 	}
 
 	public static boolean getReady() {
-		return !getUser().getId().equals(0l);
+		return getUser().getId() != null;
 	}
 
 	private static SharedPreferences getPref() {

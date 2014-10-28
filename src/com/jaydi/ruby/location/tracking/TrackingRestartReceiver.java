@@ -20,7 +20,7 @@ public class TrackingRestartReceiver extends BroadcastReceiver {
 	}
 
 	private void startSticky(Context context) {
-		if (TrackingSettings.isOnRequest(context)) {
+		if (!TrackingService.isOnRequest) {
 			Intent intent = new Intent(context, TrackingService.class);
 			context.startService(intent);
 		}

@@ -24,6 +24,11 @@
         android:layout_gravity="top|right"
         android:textColor="@color/pink_red" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/selector_transparent" />
+
     <ProgressBar
         android:id="@+id/progressbar_adapted_gem_loading"
         style="?android:attr/progressBarStyle"

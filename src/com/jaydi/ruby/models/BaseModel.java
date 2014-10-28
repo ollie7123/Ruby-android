@@ -1,4 +1,4 @@
-package com.jaydi.ruby.connection;
+package com.jaydi.ruby.models;
 
 public class BaseModel {
 	public static final int NO_DATA = 1;

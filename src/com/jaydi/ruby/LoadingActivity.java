@@ -64,27 +64,22 @@ public class LoadingActivity extends BaseActivity {
 
 	private void getUserReady() {
 		if (!LocalUser.getReady())
-			NetworkInter.insertUser(new ResponseHandler<User>() {
-
-				@Override
-				protected void onResponse(User res) {
-					if (res == null)
-						return;
-
-					LocalUser.setUser(res);
-					goToProfile();
-				}
-
-			}, new User());
-		else {
+			goToProfileDelayed();
+		else
 			refreshUser();
-			goToMainDelayed();
-		}
 	}
 
-	private void goToProfile() {
-		Intent intent = new Intent(this, ProfileActivity.class);
-		startActivity(intent);
+	@SuppressLint("HandlerLeak")
+	private void goToProfileDelayed() {
+		new Handler() {
+
+			@Override
+			public void handleMessage(Message m) {
+				Intent intent = new Intent(LoadingActivity.this, ProfileActivity.class);
+				startActivity(intent);
+			}
+
+		}.sendEmptyMessageDelayed(0, 1000);
 	}
 
 	private void refreshUser() {
@@ -92,8 +87,11 @@ public class LoadingActivity extends BaseActivity {
 
 			@Override
 			protected void onResponse(User res) {
-				if (res != null)
+				if (res != null) {
 					LocalUser.setUser(res);
+					goToMainDelayed();
+				} else
+					goToProfileDelayed();
 			}
 
 		}, LocalUser.getUser().getId());

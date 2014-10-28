@@ -32,15 +32,17 @@ public class RubymineFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_rubymine, container, false);
 		LinearLayout wrapper = (LinearLayout) view.findViewById(R.id.linear_rubymine_wrapper);
 
-		String jsonContents = rubymine.getContents();
-		List<String> contents = new Gson().fromJson(jsonContents, ArrayList.class);
+		if (rubymine.getContents() != null) {
+			String jsonContents = rubymine.getContents().getValue();
+			List<String> contents = new Gson().fromJson(jsonContents, ArrayList.class);
 
-		if (contents != null)
-			for (int i = 0; i < contents.size(); i++)
-				if (i % 2 == 0)
-					wrapper.addView(getImageView(contents.get(i)));
-				else
-					wrapper.addView(getTextView(contents.get(i)));
+			if (contents != null)
+				for (int i = 0; i < contents.size(); i++)
+					if (i % 2 == 0)
+						wrapper.addView(getImageView(contents.get(i)));
+					else
+						wrapper.addView(getTextView(contents.get(i)));
+		}
 
 		return view;
 	}
@@ -49,8 +51,8 @@ public class RubymineFragment extends Fragment {
 		ImageView imageView = new ImageView(getActivity());
 		imageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ResourceUtils.convertDpToPixel(360)));
 		imageView.setScaleType(ScaleType.CENTER_CROP);
-		NetworkInter.getImage(null, imageView, ResourceUtils.getImageUrlFromKey(imageKey), 720, 720);
-		
+		NetworkInter.getImage(null, imageView, ResourceUtils.getImageUrlFromKey(imageKey), 360, 360);
+
 		return imageView;
 	}
 
@@ -65,7 +67,7 @@ public class RubymineFragment extends Fragment {
 		textView.setLayoutParams(params);
 		textView.setGravity(Gravity.CENTER);
 		textView.setText(text);
-		
+
 		return textView;
 	}
 }

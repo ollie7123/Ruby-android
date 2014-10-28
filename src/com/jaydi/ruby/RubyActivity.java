@@ -1,5 +1,7 @@
 package com.jaydi.ruby;
 
+import java.util.Date;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,30 +11,36 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.appspot.ruby_mine.rubymine.model.Ruby;
+import com.appspot.ruby_mine.rubymine.model.Rubymine;
 import com.appspot.ruby_mine.rubymine.model.User;
 import com.jaydi.ruby.connection.ResponseHandler;
 import com.jaydi.ruby.connection.network.NetworkInter;
+import com.jaydi.ruby.models.RubymineParcel;
 import com.jaydi.ruby.user.LocalUser;
 import com.jaydi.ruby.utils.ResourceUtils;
 
 public class RubyActivity extends Activity {
-	public static final String EXTRA_RUBYMINE_NAME = "com.jaydi.ruby.extras.RUBYMINE_NAME";
+	public static final String EXTRA_RUBYMINE = "com.jaydi.ruby.extras.RUBYMINE";
 
-	private String rubymineName;
+	private Rubymine rubymine;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ruby);
 
-		if (savedInstanceState == null)
-			rubymineName = getIntent().getStringExtra(EXTRA_RUBYMINE_NAME);
+		if (savedInstanceState == null) {
+			RubymineParcel parcel = getIntent().getParcelableExtra(EXTRA_RUBYMINE);
+			rubymine = parcel.toRubymine();
+		}
 
 		if (!((PowerManager) getSystemService(Context.POWER_SERVICE)).isScreenOn())
 			turnOn();
 
 		showRubyInfo();
-		insertRuby();
+		// proper position?
+		mineRuby();
 	}
 
 	private void turnOn() {
@@ -43,14 +51,16 @@ public class RubyActivity extends Activity {
 
 	private void showRubyInfo() {
 		TextView textInfo = (TextView) findViewById(R.id.text_ruby_message);
-		textInfo.setText(String.format(ResourceUtils.getString(R.string.ruby_message), rubymineName));
+		textInfo.setText(String.format(ResourceUtils.getString(R.string.ruby_message), rubymine.getName()));
 	}
 
-	private void insertRuby() {
-		User user = LocalUser.getUser();
-		user.setRuby(user.getRuby() + 1);
+	private void mineRuby() {
+		Ruby ruby = new Ruby();
+		ruby.setUserId(LocalUser.getUser().getId());
+		ruby.setRubymineId(rubymine.getId());
+		ruby.setCreatedAt(new Date().getTime());
 
-		NetworkInter.updateUser(new ResponseHandler<User>() {
+		NetworkInter.mineRuby(new ResponseHandler<User>() {
 
 			@Override
 			protected void onResponse(User res) {
@@ -58,7 +68,7 @@ public class RubyActivity extends Activity {
 					LocalUser.setUser(res);
 			}
 
-		}, user);
+		}, ruby);
 	}
 
 	public void goToMain(View view) {

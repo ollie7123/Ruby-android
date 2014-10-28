@@ -45,8 +45,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if (rubyzone == null)
 			return;
 
-		deleteRubyzone(rubyzone.getId());
-
 		ContentValues values = new ContentValues();
 		values.put(COL_ID, rubyzone.getId());
 		values.put(COL_NAME, rubyzone.getName());
@@ -55,6 +53,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(COL_RANGE, rubyzone.getRange());
 
 		SQLiteDatabase db = getWritableDatabase();
+		db.delete(TABLE_RUBYZONES, COL_ID + " = ?", new String[] { String.valueOf(rubyzone.getId()) });
 		db.insert(TABLE_RUBYZONES, null, values);
 		db.close();
 	}

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.appspot.ruby_mine.rubymine.Rubymine;
 import com.appspot.ruby_mine.rubymine.model.Coupon;
+import com.appspot.ruby_mine.rubymine.model.Ruby;
 import com.appspot.ruby_mine.rubymine.model.User;
 import com.appspot.ruby_mine.rubymine.model.Userpair;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -193,6 +194,18 @@ public class NetworkInter {
 		}, handler);
 	}
 
+	public static <T> void recommendRubymines(Handler handler, final long id) {
+		ThreadManager.execute(new Work<T>() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T work() throws IOException {
+				return (T) service.rubymines().recommend(id).execute();
+			}
+
+		}, handler);
+	}
+
 	public static <T> void getMineGems(Handler handler, final long rubymineId) {
 		ThreadManager.execute(new Work<T>() {
 
@@ -248,6 +261,42 @@ public class NetworkInter {
 			@Override
 			public T work() throws IOException {
 				return (T) service.coupons().delete(id).execute();
+			}
+
+		}, handler);
+	}
+
+	public static <T> void mineRuby(Handler handler, final Ruby ruby) {
+		ThreadManager.execute(new Work<T>() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T work() throws IOException {
+				return (T) service.rubies().mine(ruby).execute();
+			}
+
+		}, handler);
+	}
+
+	public static <T> void redeemCoupon(Handler handler, final Coupon coupon) {
+		ThreadManager.execute(new Work<T>() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T work() throws IOException {
+				return (T) service.coupons().redeem(coupon).execute();
+			}
+
+		}, handler);
+	}
+
+	public static <T> void pairUsers(Handler handler, final Userpair userpair) {
+		ThreadManager.execute(new Work<T>() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T work() throws IOException {
+				return (T) service.userpairs().pair(userpair).execute();
 			}
 
 		}, handler);

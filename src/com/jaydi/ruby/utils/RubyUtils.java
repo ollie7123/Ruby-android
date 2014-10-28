@@ -14,12 +14,13 @@ import com.jaydi.ruby.MainActivity;
 import com.jaydi.ruby.R;
 import com.jaydi.ruby.RubyActivity;
 import com.jaydi.ruby.application.RubyApplication;
+import com.jaydi.ruby.models.RubymineParcel;
 
 public class RubyUtils {
 
 	public static void popupRuby(Context context, Rubymine rubymine) {
 		Intent intent = new Intent(context, RubyActivity.class);
-		intent.putExtra(RubyActivity.EXTRA_RUBYMINE_NAME, rubymine.getName());
+		intent.putExtra(RubyActivity.EXTRA_RUBYMINE, new RubymineParcel(rubymine));
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(intent);
 
@@ -30,7 +31,7 @@ public class RubyUtils {
 
 	public static void notifyRuby(Context context, Rubymine rubymine) {
 		Intent intent = new Intent(context, RubyActivity.class);
-		intent.putExtra(RubyActivity.EXTRA_RUBYMINE_NAME, rubymine.getName());
+		intent.putExtra(RubyActivity.EXTRA_RUBYMINE, new RubymineParcel(rubymine));
 
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 		stackBuilder.addParentStack(MainActivity.class);

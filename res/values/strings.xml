@@ -2,7 +2,7 @@
 <resources>
 
     <!-- application -->
-    <string name="app_name">RubyMine</string>
+    <string name="app_name">Ruby</string>
     <string name="ruby">Ruby</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -10,9 +10,15 @@
     <!-- Activities -->
     <string name="nickname">Nickname</string>
     <string name="confirm">Confirm</string>
+    <string name="nav_mypage">My Page</string>
     <string name="nav_collect">Collect Ruby</string>
     <string name="nav_use">Use Ruby</string>
-    <string name="nav_mypage">My Page</string>
+    <string name="nav_more">More</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="upgrade_my_social_level">Upgrade My Social Level</string>
+    <string name="buy">Buy it</string>
+    <string name="my_coupons">My coupons</string>
+    <string name="use_coupon">Use coupon</string>
     <string name="ruby_message" formatted="false">Found Ruby In %s!</string>
     <string name="get_ruby">Get Ruby</string>
 
@@ -21,5 +27,9 @@
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="waiting_message">Please wait...</string>
     <string name="title_activity_recommend">RecommendActivity</string>
+    <string name="title_activity_social">SocialActivity</string>
+    <string name="title_activity_my_coupons">MyCouponsActivity</string>
+    <string name="title_activity_gem">GemActivity</string>
+    <string name="title_activity_coupon">CouponActivity</string>
 
 </resources>

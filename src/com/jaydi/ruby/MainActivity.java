@@ -2,13 +2,12 @@ package com.jaydi.ruby;
 
 import java.util.List;
 
+import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.appspot.ruby_mine.rubymine.model.Rubyzone;
 import com.google.android.gms.common.ConnectionResult;
@@ -22,7 +21,6 @@ import com.jaydi.ruby.application.RubyApplication;
 import com.jaydi.ruby.beacon.scanning.ScanningManager;
 import com.jaydi.ruby.connection.ResponseHandler;
 import com.jaydi.ruby.connection.database.DatabaseInter;
-import com.jaydi.ruby.user.LocalUser;
 import com.jaydi.ruby.utils.CalUtils;
 import com.jaydi.ruby.utils.ResourceUtils;
 
@@ -33,7 +31,6 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 	private LocationClient locationClient;
 
 	// ui variables
-	private TextView textRubyInfo;
 	private int navPosition;
 
 	@Override
@@ -41,13 +38,12 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		// prepare ruby info view
-		prepareRubyInfoView();
-
 		// prepare navigation menu and content fragments
 		navPosition = 0;
-		updateNavMenu();
 		prepareFragments();
+		updateNavMenu();
+		changeFragment();
+		loadChildContents();
 
 		// start beacon scanner
 		initBeaconScanning();
@@ -55,37 +51,110 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 		initLocation();
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		setRubyInfo();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		// set ruby info view on action bar
-		menu.add("ruby").setActionView(textRubyInfo).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		return true;
-	}
-
-	private void prepareRubyInfoView() {
-		textRubyInfo = new TextView(this);
-		textRubyInfo.setPadding(0, 0, ResourceUtils.convertDpToPixel(18), 0);
-		textRubyInfo.setTextSize(18);
-		textRubyInfo.setTextColor(getResources().getColor(R.color.white));
-	}
-
-	private void setRubyInfo() {
-		textRubyInfo.setText(LocalUser.getUser().getRuby() + " " + ResourceUtils.getString(R.string.ruby));
-	}
-
 	private void prepareFragments() {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.add(R.id.frame_main_container_mypage, new MyPageFragment());
 		ft.add(R.id.frame_main_container_collect, new CollectRubyFragment());
 		ft.add(R.id.frame_main_container_use, new UseRubyFragment());
-		ft.add(R.id.frame_main_container_mypage, new MyPageFragment());
+		ft.add(R.id.frame_main_container_more, new MoreFragment());
 		ft.commit();
+	}
+
+	public void changeNav(View view) {
+		switch (view.getId()) {
+		case R.id.button_main_nav_mypage:
+			navPosition = 0;
+			break;
+		case R.id.button_main_nav_collect:
+			navPosition = 1;
+			break;
+		case R.id.button_main_nav_use:
+			navPosition = 2;
+			break;
+		case R.id.button_main_nav_more:
+			navPosition = 3;
+			break;
+		default:
+			navPosition = 0;
+			break;
+		}
+
+		updateNavMenu();
+		changeFragment();
+		loadChildContents();
+	}
+
+	private void updateNavMenu() {
+		findViewById(R.id.button_main_nav_mypage).setSelected(false);
+		findViewById(R.id.button_main_nav_collect).setSelected(false);
+		findViewById(R.id.button_main_nav_use).setSelected(false);
+		findViewById(R.id.button_main_nav_more).setSelected(false);
+
+		switch (navPosition) {
+		case 0:
+			findViewById(R.id.button_main_nav_mypage).setSelected(true);
+			break;
+		case 1:
+			findViewById(R.id.button_main_nav_collect).setSelected(true);
+			break;
+		case 2:
+			findViewById(R.id.button_main_nav_use).setSelected(true);
+			break;
+		case 3:
+			findViewById(R.id.button_main_nav_more).setSelected(true);
+			break;
+		default:
+			findViewById(R.id.button_main_nav_mypage).setSelected(true);
+			break;
+		}
+	}
+
+	private void changeFragment() {
+		findViewById(R.id.frame_main_container_mypage).setVisibility(View.GONE);
+		findViewById(R.id.frame_main_container_collect).setVisibility(View.GONE);
+		findViewById(R.id.frame_main_container_use).setVisibility(View.GONE);
+		findViewById(R.id.frame_main_container_more).setVisibility(View.GONE);
+
+		switch (navPosition) {
+		case 0:
+			findViewById(R.id.frame_main_container_mypage).setVisibility(View.VISIBLE);
+			break;
+		case 1:
+			findViewById(R.id.frame_main_container_collect).setVisibility(View.VISIBLE);
+			break;
+		case 2:
+			findViewById(R.id.frame_main_container_use).setVisibility(View.VISIBLE);
+			break;
+		case 3:
+			findViewById(R.id.frame_main_container_more).setVisibility(View.VISIBLE);
+			break;
+		default:
+			findViewById(R.id.frame_main_container_mypage).setVisibility(View.VISIBLE);
+			break;
+		}
+	}
+
+	private void loadChildContents() {
+		if (rubyzone == null)
+			return;
+
+		switch (navPosition) {
+		case 0:
+			((MainFragment) getSupportFragmentManager().findFragmentById(R.id.frame_main_container_mypage)).loadContents(rubyzone.getId());
+			break;
+		case 1:
+			((MainFragment) getSupportFragmentManager().findFragmentById(R.id.frame_main_container_collect)).loadContents(rubyzone.getId());
+			break;
+		case 2:
+			((MainFragment) getSupportFragmentManager().findFragmentById(R.id.frame_main_container_use)).loadContents(rubyzone.getId());
+			break;
+		case 3:
+			((MainFragment) getSupportFragmentManager().findFragmentById(R.id.frame_main_container_more)).loadContents(rubyzone.getId());
+			break;
+		default:
+			((MainFragment) getSupportFragmentManager().findFragmentById(R.id.frame_main_container_mypage)).loadContents(rubyzone.getId());
+			break;
+		}
 	}
 
 	private void initBeaconScanning() {
@@ -94,7 +163,7 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 	}
 
 	private void initLocation() {
-		if (servicesConnected()) { // if google service available start fuse location service
+		if (servicesConnected() && locationEnabled()) { // if google service available start fuse location service
 			locationClient = new LocationClient(this, this, this);
 			locationClient.connect();
 		} else
@@ -110,6 +179,11 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 			return true;
 		else
 			return false;
+	}
+
+	private boolean locationEnabled() {
+		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
 	}
 
 	@Override
@@ -159,94 +233,18 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 
 				for (Rubyzone can : res) {
 					double d = CalUtils.calDistance(lat, lng, can.getLat(), can.getLng());
-					if (d < distance) {
+					if (d < distance && !can.getId().equals(1l)) {
 						rubyzone = can;
 						distance = d;
 					}
 				}
 
 				MainActivity.this.rubyzone = rubyzone;
-				refreshContents();
+				getActionBar().setTitle(ResourceUtils.getString(R.string.app_name) + " - " + rubyzone.getName());
+				loadChildContents();
 			}
 
 		});
-	}
-
-	private void refreshContents() {
-		changeRubyzoneTitle();
-		loadChildContents();
-	}
-
-	private void changeRubyzoneTitle() {
-		getActionBar().setTitle(ResourceUtils.getString(R.string.app_name) + " - " + rubyzone.getName());
-	}
-
-	private void loadChildContents() {
-		((MainFragment) getSupportFragmentManager().findFragmentById(R.id.frame_main_container_collect)).loadContents(rubyzone.getId());
-		((MainFragment) getSupportFragmentManager().findFragmentById(R.id.frame_main_container_use)).loadContents(rubyzone.getId());
-		((MainFragment) getSupportFragmentManager().findFragmentById(R.id.frame_main_container_mypage)).loadContents(rubyzone.getId());
-	}
-
-	public void changeNav(View view) {
-		switch (view.getId()) {
-		case R.id.button_main_nav_collect:
-			navPosition = 0;
-			break;
-		case R.id.button_main_nav_use:
-			navPosition = 1;
-			break;
-		case R.id.button_main_nav_mypage:
-			navPosition = 2;
-			break;
-		default:
-			navPosition = 0;
-			break;
-		}
-
-		updateNavMenu();
-		changeFragment();
-	}
-
-	private void updateNavMenu() {
-		findViewById(R.id.button_main_nav_collect).setSelected(false);
-		findViewById(R.id.button_main_nav_use).setSelected(false);
-		findViewById(R.id.button_main_nav_mypage).setSelected(false);
-
-		switch (navPosition) {
-		case 0:
-			findViewById(R.id.button_main_nav_collect).setSelected(true);
-			break;
-		case 1:
-			findViewById(R.id.button_main_nav_use).setSelected(true);
-			break;
-		case 2:
-			findViewById(R.id.button_main_nav_mypage).setSelected(true);
-			break;
-		default:
-			findViewById(R.id.button_main_nav_collect).setSelected(true);
-			break;
-		}
-	}
-
-	private void changeFragment() {
-		findViewById(R.id.frame_main_container_collect).setVisibility(View.GONE);
-		findViewById(R.id.frame_main_container_use).setVisibility(View.GONE);
-		findViewById(R.id.frame_main_container_mypage).setVisibility(View.GONE);
-
-		switch (navPosition) {
-		case 0:
-			findViewById(R.id.frame_main_container_collect).setVisibility(View.VISIBLE);
-			break;
-		case 1:
-			findViewById(R.id.frame_main_container_use).setVisibility(View.VISIBLE);
-			break;
-		case 2:
-			findViewById(R.id.frame_main_container_mypage).setVisibility(View.VISIBLE);
-			break;
-		default:
-			findViewById(R.id.frame_main_container_collect).setVisibility(View.VISIBLE);
-			break;
-		}
 	}
 
 }

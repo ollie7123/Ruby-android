@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jaydi.ruby"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="0.01" >
 
     <uses-sdk
         android:minSdkVersion="18"
@@ -128,6 +128,28 @@
             android:label="@string/title_activity_recommend"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeNoTitle" >
+        </activity>
+        <activity
+            android:name="com.jaydi.ruby.SocialActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_social"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.jaydi.ruby.MyCouponsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_my_coupons"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.jaydi.ruby.GemActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_gem"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.jaydi.ruby.CouponActivity"
+            android:label="@string/title_activity_coupon" >
         </activity>
     </application>
 

@@ -21,6 +21,7 @@ import com.jaydi.ruby.dialogs.PictureOptionsDialog;
 import com.jaydi.ruby.dialogs.PictureOptionsDialog.OnPictureOptionClickListener;
 import com.jaydi.ruby.user.LocalUser;
 import com.jaydi.ruby.utils.DialogUtils;
+import com.jaydi.ruby.utils.ResourceUtils;
 
 public class ProfileActivity extends BaseActivity implements OnPictureOptionClickListener {
 	private static final int REQUEST_GET_IMAGE = 0;
@@ -32,6 +33,22 @@ public class ProfileActivity extends BaseActivity implements OnPictureOptionClic
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
+
+		setParam();
+	}
+
+	private void setParam() {
+		User user = LocalUser.getUser();
+
+		if (user.getImageKey() != null && !user.getImageKey().isEmpty()) {
+			ImageView imageImage = (ImageView) findViewById(R.id.image_profile_image);
+			NetworkInter.getImage(null, imageImage, ResourceUtils.getImageUrlFromKey(user.getImageKey()), 300, 300);
+		}
+
+		if (user.getName() != null && !user.getName().isEmpty()) {
+			EditText editName = (EditText) findViewById(R.id.edit_profile_nickname);
+			editName.setText(user.getName());
+		}
 	}
 
 	public void getImage(View view) {
@@ -92,15 +109,18 @@ public class ProfileActivity extends BaseActivity implements OnPictureOptionClic
 	}
 
 	private void sendProfileWithImage() {
-		NetworkInter.uploadImage(new ResponseHandler<String>(DialogUtils.showWaitingDialog(this)) {
+		if (imagePath.startsWith("/"))
+			NetworkInter.uploadImage(new ResponseHandler<String>(DialogUtils.showWaitingDialog(this)) {
 
-			@Override
-			protected void onResponse(String imageKey) {
-				imagePath = imageKey;
-				sendProfile();
-			}
+				@Override
+				protected void onResponse(String imageKey) {
+					imagePath = imageKey;
+					sendProfile();
+				}
 
-		}, imagePath);
+			}, imagePath);
+		else
+			sendProfile();
 	}
 
 	private void sendProfile() {
@@ -108,16 +128,29 @@ public class ProfileActivity extends BaseActivity implements OnPictureOptionClic
 		user.setImageKey(imagePath);
 		user.setName(name);
 
-		NetworkInter.updateUser(new ResponseHandler<User>(DialogUtils.showWaitingDialog(this)) {
+		// temporary
+		if (user.getId() == null)
+			NetworkInter.insertUser(new ResponseHandler<User>(DialogUtils.showWaitingDialog(this)) {
 
-			@Override
-			protected void onResponse(User res) {
-				if (res != null)
-					LocalUser.setUser(res);
-				goToMain();
-			}
+				@Override
+				protected void onResponse(User res) {
+					if (res != null)
+						LocalUser.setUser(res);
+					goToMain();
+				}
 
-		}, user);
+			}, user);
+		else
+			NetworkInter.updateUser(new ResponseHandler<User>(DialogUtils.showWaitingDialog(this)) {
+
+				@Override
+				protected void onResponse(User res) {
+					if (res != null)
+						LocalUser.setUser(res);
+					goToMain();
+				}
+
+			}, user);
 	}
 
 	private void goToMain() {

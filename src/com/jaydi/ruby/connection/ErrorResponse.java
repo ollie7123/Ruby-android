@@ -1,4 +1,4 @@
-package com.jaydi.ruby.connection.network;
+package com.jaydi.ruby.connection;
 
 import com.jaydi.ruby.R;
 import com.jaydi.ruby.models.BaseModel;

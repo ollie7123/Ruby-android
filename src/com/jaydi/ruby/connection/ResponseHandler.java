@@ -7,7 +7,6 @@ import android.os.Message;
 
 import com.google.api.client.json.GenericJson;
 import com.google.gson.Gson;
-import com.jaydi.ruby.connection.network.ErrorResponse;
 import com.jaydi.ruby.models.BaseModel;
 
 public abstract class ResponseHandler<T> extends Handler {

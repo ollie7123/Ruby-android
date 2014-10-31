@@ -6,17 +6,21 @@ import java.util.List;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 
+import com.appspot.ruby_mine.rubymine.model.Ruby;
 import com.appspot.ruby_mine.rubymine.model.Rubymine;
-import com.appspot.ruby_mine.rubymine.model.RubymineCol;
 import com.jaydi.ruby.adapters.MinePagerAdapter;
-import com.jaydi.ruby.connection.ResponseHandler;
-import com.jaydi.ruby.connection.network.NetworkInter;
+import com.jaydi.ruby.models.RubyParcel;
+import com.jaydi.ruby.models.RubymineParcel;
 
 public class RecommendActivity extends BaseActivity {
-	public static final String EXTRA_CURRENT_RUBYMINE_ID = "com.jaydi.ruby.extras.CURRENT_RUBYMINE_ID";
+	public static final String EXTRA_RUBIES = "com.jaydi.ruby.extras.RUBIES";
+	public static final String EXTRA_PLANTER = "com.jaydi.ruby.extras.PLANTER";
+	public static final String EXTRA_GIVERS = "com.jaydi.ruby.extras.GIVERS";
 
-	private long currentRubymineId;
-	private List<Rubymine> rubymines;
+	private List<Ruby> rubies;
+	@SuppressWarnings("unused")
+	private Rubymine planter;
+	private List<Rubymine> givers;
 	private ViewPager minePager;
 	private MinePagerAdapter minePagerAdapter;
 
@@ -25,35 +29,24 @@ public class RecommendActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recommend);
 
-		if (savedInstanceState == null)
-			currentRubymineId = getIntent().getLongExtra(EXTRA_CURRENT_RUBYMINE_ID, 0);
+		if (savedInstanceState == null) {
+			RubyParcel[] rubyParcels = (RubyParcel[]) getIntent().getParcelableArrayExtra(EXTRA_RUBIES);
+			rubies = new ArrayList<Ruby>();
+			for (RubyParcel rubyParcel : rubyParcels)
+				rubies.add(rubyParcel.toRuby());
 
-		rubymines = new ArrayList<Rubymine>();
+			RubymineParcel planterParcel = getIntent().getParcelableExtra(EXTRA_PLANTER);
+			planter = planterParcel.toRubymine();
+
+			RubymineParcel[] giverParcels = (RubymineParcel[]) getIntent().getParcelableArrayExtra(EXTRA_GIVERS);
+			givers = new ArrayList<Rubymine>();
+			for (RubymineParcel giverParcel : giverParcels)
+				givers.add(giverParcel.toRubymine());
+		}
+
 		minePager = (ViewPager) findViewById(R.id.pager_recommend_mines);
-		minePagerAdapter = new MinePagerAdapter(getSupportFragmentManager(), rubymines);
+		minePagerAdapter = new MinePagerAdapter(getSupportFragmentManager(), givers);
 		minePager.setAdapter(minePagerAdapter);
-
-		loadMines();
-	}
-
-	private void loadMines() {
-		NetworkInter.recommendRubymines(new ResponseHandler<RubymineCol>() {
-
-			@Override
-			protected void onResponse(RubymineCol res) {
-				if (res == null || res.getRubymines() == null)
-					return;
-
-				rubymines.clear();
-				rubymines.addAll(res.getRubymines());
-				refresh();
-			}
-
-		}, currentRubymineId);
-	}
-
-	private void refresh() {
-		minePagerAdapter.notifyDataSetChanged();
 	}
 
 }

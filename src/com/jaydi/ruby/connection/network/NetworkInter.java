@@ -67,7 +67,7 @@ public class NetworkInter {
 			url = buildResizingUrl(url, width, height);
 
 		// get image from cache and return if cache exists
-		if (getImageFromBitmap(handler, imageView, url, width, height))
+		if (getImageFromCache(handler, imageView, url, width, height))
 			return;
 
 		// load image from url
@@ -77,7 +77,7 @@ public class NetworkInter {
 			ThreadManager.execute(new ImageFileLoadWork(url, width, height), new BitmapResponseHandler(handler, imageView));
 	}
 
-	private static boolean getImageFromBitmap(Handler handler, ImageView imageView, String url, int width, int height) {
+	private static boolean getImageFromCache(Handler handler, ImageView imageView, String url, int width, int height) {
 		// get cached bitmap
 		Bitmap bitmap = BitmapCache.getBitmapItem(url);
 
@@ -134,13 +134,13 @@ public class NetworkInter {
 		}, handler);
 	}
 
-	public static <T> void insertUserpair(Handler handler, final Userpair userpair) {
+	public static <T> void searchUser(Handler handler, final long id, final String name) {
 		ThreadManager.execute(new Work<T>() {
 
 			@SuppressWarnings("unchecked")
 			@Override
 			public T work() throws IOException {
-				return (T) service.userpairs().insert(userpair).execute();
+				return (T) service.users().search(id, name).execute();
 			}
 
 		}, handler);
@@ -153,6 +153,30 @@ public class NetworkInter {
 			@Override
 			public T work() throws IOException {
 				return (T) service.userpairs().list(userId).execute();
+			}
+
+		}, handler);
+	}
+
+	public static <T> void pairUsers(Handler handler, final Userpair userpair) {
+		ThreadManager.execute(new Work<T>() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T work() throws IOException {
+				return (T) service.userpairs().pair(userpair).execute();
+			}
+
+		}, handler);
+	}
+
+	public static <T> void depairUsers(Handler handler, final long id) {
+		ThreadManager.execute(new Work<T>() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T work() throws IOException {
+				return (T) service.userpairs().delete(id).execute();
 			}
 
 		}, handler);
@@ -266,18 +290,6 @@ public class NetworkInter {
 		}, handler);
 	}
 
-	public static <T> void mineRuby(Handler handler, final Ruby ruby) {
-		ThreadManager.execute(new Work<T>() {
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public T work() throws IOException {
-				return (T) service.rubies().mine(ruby).execute();
-			}
-
-		}, handler);
-	}
-
 	public static <T> void redeemCoupon(Handler handler, final Coupon coupon) {
 		ThreadManager.execute(new Work<T>() {
 
@@ -290,13 +302,13 @@ public class NetworkInter {
 		}, handler);
 	}
 
-	public static <T> void pairUsers(Handler handler, final Userpair userpair) {
+	public static <T> void mineRuby(Handler handler, final Ruby ruby) {
 		ThreadManager.execute(new Work<T>() {
 
 			@SuppressWarnings("unchecked")
 			@Override
 			public T work() throws IOException {
-				return (T) service.userpairs().pair(userpair).execute();
+				return (T) service.rubies().mine(ruby).execute();
 			}
 
 		}, handler);

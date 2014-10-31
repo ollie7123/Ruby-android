@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:focusable="true"
+    android:orientation="horizontal"
+    tools:context="com.jaydi.ruby.RubyActivity" >
+
+    <ImageView
+        android:id="@+id/image_adapted_userpair_image"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/text_adapted_userpair_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/text_adapted_userpair_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_pink_red"
+        android:clickable="true"
+        android:padding="2dp"
+        android:text="@string/remove"
+        android:textColor="@color/white" />
+
+</LinearLayout>

@@ -16,6 +16,13 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="anb.ground.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="anb.ground.permission.C2D_MESSAGE" />
 
     <application
         android:name="com.jaydi.ruby.application.RubyApplication"
@@ -73,6 +80,18 @@
             android:label="ScanningCommandReceiver" >
             <intent-filter>
                 <action android:name="com.jaydi.ruby.intent.action.RESTART_SCANNING" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.jaydi.ruby.gcm.GCMBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="anb.ground" />
             </intent-filter>
         </receiver>
 

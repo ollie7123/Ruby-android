@@ -14,8 +14,13 @@
     <string name="nav_collect">Collect Ruby</string>
     <string name="nav_use">Use Ruby</string>
     <string name="nav_more">More</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_pairs">Pairs</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="upgrade_my_social_level">Upgrade My Social Level</string>
+    <string name="search">Search</string>
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
     <string name="buy">Buy it</string>
     <string name="my_coupons">My coupons</string>
     <string name="use_coupon">Use coupon</string>

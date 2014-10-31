@@ -33,7 +33,7 @@
             android:layout_marginTop="5dp"
             android:background="@drawable/selector_pink_red"
             android:gravity="center"
-            android:onClick="goToMain"
+            android:onClick="mineRuby"
             android:text="@string/get_ruby"
             android:textColor="@color/white"
             android:textSize="20sp" />

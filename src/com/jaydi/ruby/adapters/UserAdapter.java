@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.appspot.ruby_mine.rubymine.model.User;
 import com.jaydi.ruby.R;
 import com.jaydi.ruby.connection.network.NetworkInter;
+import com.jaydi.ruby.user.LocalUser;
 import com.jaydi.ruby.utils.ResourceUtils;
 
 public class UserAdapter extends BaseAdapter {
@@ -59,7 +60,7 @@ public class UserAdapter extends BaseAdapter {
 		TextView textName = (TextView) view.findViewById(R.id.text_adapted_user_name);
 		textName.setText(user.getName());
 
-		if (!user.getPaired()) {
+		if (!user.getPaired() && !user.getId().equals(LocalUser.getUser().getId())) {
 			final TextView textAdd = (TextView) view.findViewById(R.id.text_adapted_user_add);
 			textAdd.setVisibility(View.VISIBLE);
 			textAdd.setOnClickListener(new OnClickListener() {

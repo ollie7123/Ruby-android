@@ -57,7 +57,7 @@ public class DialogUtils {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 			}
-			
+
 		});
 		builder.show();
 	}
@@ -72,7 +72,22 @@ public class DialogUtils {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 			}
-			
+
+		});
+		builder.show();
+	}
+
+	public static void showDeletePairDialog(Context context, OnClickListener deletePairListener) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle("Are you sure?");
+		builder.setPositiveButton("Yes", deletePairListener);
+		builder.setNegativeButton("No", new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+
 		});
 		builder.show();
 	}

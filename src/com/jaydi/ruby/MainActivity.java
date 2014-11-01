@@ -21,6 +21,7 @@ import com.jaydi.ruby.application.RubyApplication;
 import com.jaydi.ruby.beacon.scanning.ScanningManager;
 import com.jaydi.ruby.connection.ResponseHandler;
 import com.jaydi.ruby.connection.database.DatabaseInter;
+import com.jaydi.ruby.gcm.GcmManager;
 import com.jaydi.ruby.utils.CalUtils;
 import com.jaydi.ruby.utils.ResourceUtils;
 
@@ -45,10 +46,18 @@ public class MainActivity extends BaseActivity implements ConnectionCallbacks, O
 		changeFragment();
 		loadChildContents();
 
+		// check gcm
+		GcmManager.check(this);
 		// start beacon scanner
 		initBeaconScanning();
 		// get location info to set current rubyzone
 		initLocation();
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		loadChildContents();
 	}
 
 	private void prepareFragments() {

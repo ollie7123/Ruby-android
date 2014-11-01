@@ -25,6 +25,8 @@
     <string name="my_coupons">My coupons</string>
     <string name="use_coupon">Use coupon</string>
     <string name="ruby_message" formatted="false">Found Ruby In %s!</string>
+    <string name="level_change_message_up">Social level up!!</string>
+    <string name="level_change_message_down">Social level down...</string>
     <string name="get_ruby">Get Ruby</string>
 
     <!-- Titles -->
@@ -36,5 +38,9 @@
     <string name="title_activity_my_coupons">MyCouponsActivity</string>
     <string name="title_activity_gem">GemActivity</string>
     <string name="title_activity_coupon">CouponActivity</string>
+    <string name="title_activity_sign_in">SignInActivity</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_phone">PhoneActivity</string>
+    <string name="title_activity_ver_code">VerCodeActivity</string>
 
 </resources>

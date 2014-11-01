@@ -3,8 +3,11 @@ package com.jaydi.ruby;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -71,6 +74,8 @@ public class SocialActivity extends SubCategoryActivity implements PairUserInter
 
 		updateNavMenu();
 		changePage();
+
+		hideSoftKeyboard();
 	}
 
 	private void updateNavMenu() {
@@ -100,7 +105,6 @@ public class SocialActivity extends SubCategoryActivity implements PairUserInter
 			break;
 		case 1:
 			findViewById(R.id.list_social_pairs).setVisibility(View.VISIBLE);
-			getPairs();
 			break;
 		default:
 			findViewById(R.id.linear_social_search).setVisibility(View.VISIBLE);
@@ -123,6 +127,8 @@ public class SocialActivity extends SubCategoryActivity implements PairUserInter
 			}
 
 		}, LocalUser.getUser().getId(), name);
+
+		hideSoftKeyboard();
 	}
 
 	@Override
@@ -138,7 +144,14 @@ public class SocialActivity extends SubCategoryActivity implements PairUserInter
 		userpair.setUserNameB(user.getName());
 		userpair.setUserImageKeyA(LocalUser.getUser().getImageKey());
 		userpair.setUserImageKeyB(user.getImageKey());
-		NetworkInter.pairUsers(null, userpair);
+		NetworkInter.pairUsers(new ResponseHandler<Void>() {
+
+			@Override
+			protected void onResponse(Void res) {
+				getPairs();
+			}
+
+		}, userpair);
 
 		ToastUtils.show("Added");
 	}
@@ -158,14 +171,30 @@ public class SocialActivity extends SubCategoryActivity implements PairUserInter
 	}
 
 	@Override
-	public void onDeletePair(int position) {
-		Userpair pair = userpairs.get(position);
-		userpairs.remove(position);
-		userpairAdapter.notifyDataSetChanged();
+	public void onDeletePair(final int position) {
+		DialogUtils.showDeletePairDialog(this, new OnClickListener() {
 
-		NetworkInter.depairUsers(null, pair.getId());
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
 
-		ToastUtils.show("Removed");
+				Userpair pair = userpairs.get(position);
+				userpairs.remove(position);
+				userpairAdapter.notifyDataSetChanged();
+
+				NetworkInter.depairUsers(null, pair.getId());
+
+				ToastUtils.show("Removed");
+			}
+
+		});
+	}
+
+	public void hideSoftKeyboard() {
+		if (getCurrentFocus() != null) {
+			InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+			inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+		}
 	}
 
 }

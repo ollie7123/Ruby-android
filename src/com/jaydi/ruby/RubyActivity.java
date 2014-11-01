@@ -3,7 +3,6 @@ package com.jaydi.ruby;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +17,7 @@ import com.jaydi.ruby.models.RubyParcel;
 import com.jaydi.ruby.models.RubymineParcel;
 import com.jaydi.ruby.utils.ResourceUtils;
 
-public class RubyActivity extends Activity {
+public class RubyActivity extends BaseActivity {
 	public static final String EXTRA_RUBIES = "com.jaydi.ruby.extras.RUBIES";
 	public static final String EXTRA_PLANTER = "com.jaydi.ruby.extras.PLANTER";
 	public static final String EXTRA_GIVERS = "com.jaydi.ruby.extras.GIVERS";

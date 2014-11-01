@@ -18,16 +18,16 @@ public class LocalUser {
 
 	public static void setUser(User user) {
 		LocalUser.user = user;
-		saveUser(user);
+		saveUser();
 	}
 
 	public static User getUser() {
 		if (user == null)
-			user = loadUser();
+			loadUser();
 		return user;
 	}
 
-	private static void saveUser(User user) {
+	private static void saveUser() {
 		SharedPreferences.Editor editor = getPref().edit();
 		editor.putLong(PROPERTY_ID, user.getId());
 		editor.putString(PROPERTY_NAME, user.getName());
@@ -37,7 +37,7 @@ public class LocalUser {
 		editor.commit();
 	}
 
-	private static User loadUser() {
+	private static void loadUser() {
 		User user = new User();
 		SharedPreferences pref = getPref();
 		user.setId((pref.getLong(PROPERTY_ID, 0) != 0) ? pref.getLong(PROPERTY_ID, 0) : null);
@@ -45,7 +45,7 @@ public class LocalUser {
 		user.setImageKey(pref.getString(PROPERTY_IMAGE_KEY, ""));
 		user.setLevel(pref.getInt(PROPERTY_LEVEL, 0));
 		user.setRuby(pref.getInt(PROPERTY_RUBY, 0));
-		return user;
+		LocalUser.user = user;
 	}
 
 	public static boolean getReady() {
